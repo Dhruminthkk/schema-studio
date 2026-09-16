@@ -1,0 +1,96 @@
+{
+ "id": "design",
+ "name": "Design notes",
+ "title": "Policy / PolicyTerm \u2014 field disposition",
+ "subtitle": "113 live legacy fields \u00b7 89 carried \u00b7 12 combined \u00b7 8 dropped \u00b7 4 blocked",
+ "intent": "Every field in PMAST and POLTERM that still holds data, classified by what kind of field it is, assigned to the policy or the term, and given a recommendation.",
+ "sections": [
+  {
+   "kind": "h2",
+   "text": "Why the split is the hard part"
+  },
+  {
+   "kind": "p",
+   "text": "PMAST is keyed on the policy alone, so every column in it is a fact about the policy and there is nothing to decide. POLTERM is keyed policy x term: 9,140,733 rows, 15.1 terms per policy. A column there is physically per-term whether or not it is logically per-term \u2014 the legacy system copies some policy-level values onto every term row and lets others vary."
+  },
+  {
+   "kind": "callout",
+   "tone": "warn",
+   "title": "What the extract cannot tell us",
+   "text": "Placing a POLTERM column on the policy asserts that all 15 term rows agree. The extract holds only the current term for most policies, so that cannot be confirmed. Those assignments are marked rather than quietly accepted."
+  },
+  {
+   "kind": "h2",
+   "text": "How a field was classified"
+  },
+  {
+   "kind": "table",
+   "head": [
+    "Recommendation",
+    "Meaning",
+    "Count"
+   ],
+   "rows": [
+    [
+     "Carry over",
+     "Becomes its own field in the target model.",
+     "89"
+    ],
+    [
+     "Combine into another field",
+     "The concept survives but not the column \u2014 it folds into a field that already holds it.",
+     "12"
+    ],
+    [
+     "Do not carry",
+     "Dead in practice, or a grain this entity cannot express.",
+     "8"
+    ],
+    [
+     "Ask an SME first",
+     "Real data, no established meaning. Blocked until someone explains it.",
+     "4"
+    ]
+   ]
+  },
+  {
+   "kind": "h2",
+   "text": "What combines into what"
+  },
+  {
+   "kind": "p",
+   "text": "The single largest finding: a set of columns that are arithmetic over their own neighbours. A sum insured that is the sum of its two parts. A premium tax that is gross minus net. A commission amount that is net premium times the percentage sitting next to it. An outstanding balance that is billed minus paid. Each was stored, and each can disagree with its own inputs."
+  },
+  {
+   "kind": "bullets",
+   "label": "Measured, not assumed",
+   "items": [
+    "sum_insured_total equals its two parts on 58,904 of 58,904 sampled policies",
+    "term_premium_net is identical to POLTERM<13> on 11,942 of 11,947 sampled rows",
+    "agency_code agrees with broker_code on 99.4% of policies, across 3,118 values",
+    "amount_outstanding equals billed minus paid on 11,946 of 11,947 sampled rows"
+   ]
+  },
+  {
+   "kind": "h2",
+   "text": "Parallel arrays are rows"
+  },
+  {
+   "kind": "p",
+   "text": "Four pairs of columns are parallel multivalues kept in step by position: endorsement codes and their texts, rating factor codes and their values, MTA dates and their premium deltas. Aligned on 94-97% of records where both are populated. They are one list each, and become rows carrying both halves."
+  },
+  {
+   "kind": "h2",
+   "text": "Open questions"
+  },
+  {
+   "kind": "bullets",
+   "items": [
+    "Which POLTERM columns are genuinely policy-level? Needs a re-extract covering every term row for a sample of policies.",
+    "Is the recovered lifecycle vocabulary complete \u2014 and does VOID mean cancelled from inception, or never taken up?",
+    "Should payment instruments migrate at all, or stay with the payment processor?",
+    "PMAST<170> MVNOVA3 is set on 42.8% of the book with no established meaning."
+   ]
+  }
+ ]
+}

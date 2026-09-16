@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Schema Studio</title>
+<meta name="description" content="Explore a legacy data estate as a model you can walk around. Pan the ERD, follow guided walkthroughs, read the rationale behind every decision, and inspect where each field came from — its legacy source, census fill, sensitivity and whether it should be stored at all.">
+<meta name="color-scheme" content="light dark">
+<meta property="og:title" content="Schema Studio">
+<meta property="og:description" content="A legacy schema explorer. The model, as something you can walk around.">
+<meta property="og:type" content="website">
+<script>(function(){try{
+var t=localStorage.getItem('ss-site-theme');
+if(t!=='light'&&t!=='dark'){
+  var app=localStorage.getItem('schemastudio.theme');
+  if(app)t={slate:'dark',midnight:'dark',carbon:'dark',pine:'dark'}[app]||'light';
+}
+if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);
+}catch(e){}})();</script>
+<style>
+/* Schema Studio — site. Self-contained: no build step, no local assets.
+   Tokens are lifted from the app's own stylesheet (src/styles.css: the "paper"
+   light theme and the "slate" dark one) so the site and the tool read as one
+   product rather than two.
+
+   Three theme states, not two: an explicit choice stamps data-theme on the
+   root, while the default "system" setting stamps nothing and only
+   prefers-color-scheme separates light from dark. Light lives on bare :root;
+   dark is declared twice — once behind the media query, once behind
+   [data-theme='dark'] so the toggle wins both ways. No colour is ever declared
+   only inside a media query. */
+:root{
+  --bg:#f7f7f5; --grid:#e6e6e2; --surface:#ffffff; --surface-2:#fafaf8; --sunken:#f1f1ee;
+  --ink:#0c0c0b; --ink-2:#353532; --ink-3:#65655f; --ink-4:#96968f; --ink-5:#c6c6bf;
+  --line:#ebebe7; --line-2:#dedeD8; --line-strong:#b4b4ac;
+  --accent:oklch(0.54 0.16 258); --accent-bg:oklch(0.955 0.030 258);
+  --warn:oklch(0.62 0.13 65);  --warn-bg:oklch(0.96 0.05 75);
+  --danger:oklch(0.55 0.16 25); --danger-bg:oklch(0.96 0.04 25);
+  --good:oklch(0.55 0.10 155); --good-bg:oklch(0.96 0.04 155);
+  --violet:oklch(0.55 0.12 300);
+  --shadow:0 2px 4px -1px rgba(20,18,14,calc(0.05*1)),0 10px 24px -6px rgba(20,18,14,calc(0.11*1));
+  --pop:0 4px 10px -2px rgba(20,18,14,calc(0.07*1)),0 20px 44px -12px rgba(20,18,14,calc(0.20*1));
+  --sans:ui-sans-serif,system-ui,-apple-system,"SF Pro Text","Segoe UI Variable Text","Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono","JetBrains Mono","Cascadia Mono",Menlo,Consolas,monospace;
+  --ease:cubic-bezier(.22,1,.36,1); --wrap:1140px;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme='light']){
+    --bg:#0b0c0e; --grid:#17191d; --surface:#131519; --surface-2:#191c21; --sunken:#0e1013;
+    --ink:#f2f3f5; --ink-2:#c6cad0; --ink-3:#8d939c; --ink-4:#626871; --ink-5:#3b4048;
+    --line:#232730; --line-2:#2f343e; --line-strong:#4a515c;
+    --accent:oklch(0.76 0.15 250); --accent-bg:oklch(0.30 0.07 250);
+    --warn:oklch(0.78 0.13 70);  --warn-bg:oklch(0.26 0.07 70);
+    --danger:oklch(0.72 0.16 25); --danger-bg:oklch(0.26 0.07 25);
+    --good:oklch(0.74 0.10 155); --good-bg:oklch(0.26 0.06 155);
+    --violet:oklch(0.76 0.11 300);
+    --shadow:0 2px 4px -1px rgba(0,0,0,calc(0.05*2.6)),0 10px 24px -6px rgba(0,0,0,calc(0.11*2.6)); --pop:0 4px 10px -2px rgba(0,0,0,calc(0.07*2.6)),0 20px 44px -12px rgba(0,0,0,calc(0.20*2.6));
+    color-scheme:dark;
+  }
+}
+:root[data-theme='dark']{
+  --bg:#0b0c0e; --grid:#17191d; --surface:#131519; --surface-2:#191c21; --sunken:#0e1013;
+  --ink:#f2f3f5; --ink-2:#c6cad0; --ink-3:#8d939c; --ink-4:#626871; --ink-5:#3b4048;
+  --line:#232730; --line-2:#2f343e; --line-strong:#4a515c;
+  --accent:oklch(0.76 0.15 250); --accent-bg:oklch(0.30 0.07 250);
+  --warn:oklch(0.78 0.13 70);  --warn-bg:oklch(0.26 0.07 70);
+  --danger:oklch(0.72 0.16 25); --danger-bg:oklch(0.26 0.07 25);
+  --good:oklch(0.74 0.10 155); --good-bg:oklch(0.26 0.06 155);
+  --violet:oklch(0.76 0.11 300);
+  --shadow:0 2px 4px -1px rgba(0,0,0,calc(0.05*2.6)),0 10px 24px -6px rgba(0,0,0,calc(0.11*2.6)); --pop:0 4px 10px -2px rgba(0,0,0,calc(0.07*2.6)),0 20px 44px -12px rgba(0,0,0,calc(0.20*2.6));
+  color-scheme:dark;
+}
+
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);letter-spacing:-0.011em;font-size:16px;
+  line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+/* the faint drafting grid the canvas itself uses */
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.5;
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),
+                   linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:32px 32px;
+  mask-image:radial-gradient(1000px 700px at 78% -8%,#000,transparent 70%)}
+main,header,footer{position:relative;z-index:1}
+.wrap{max-width:var(--wrap);margin:0 auto;padding:0 28px}
+h1,h2,h3,h4{margin:0;line-height:1.15;letter-spacing:-.02em}
+p{margin:0}a{color:inherit}
+.lbl{font-family:var(--mono);font-size:10.5px;font-weight:600;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--accent)}
+.lbl.warn{color:var(--warn)}.lbl.muted{color:var(--ink-4)}
+.h1{font-size:clamp(34px,5vw,56px);font-weight:600;letter-spacing:-.035em;line-height:1.05}
+.h2{font-size:clamp(25px,3.4vw,36px);font-weight:600;letter-spacing:-.028em}
+.sub{color:var(--ink-3);font-size:17px;max-width:62ch;margin-top:18px}
+.mono{font-family:var(--mono)}
+section{padding:96px 0}
+hr.rule{height:1px;background:var(--line);border:0;margin:0}
+
+header{position:sticky;top:0;z-index:60;background:color-mix(in srgb,var(--bg) 88%,transparent);
+  backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid var(--line)}
+.nav{display:flex;align-items:center;gap:18px;height:62px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink)}
+.brand-mark{width:26px;height:26px;flex:none;color:var(--accent)}
+.brand-mark svg{width:100%;height:100%;display:block}
+.brand-name{font-size:16px;font-weight:600;letter-spacing:-.02em}
+.brand-sub{display:block;font-family:var(--mono);font-size:9px;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--ink-4);margin-top:1px}
+.nav ul{display:flex;gap:24px;list-style:none;margin:0 0 0 auto;padding:0;font-size:13.5px;color:var(--ink-3)}
+.nav ul a{text-decoration:none;transition:color .2s var(--ease)}
+.nav ul a:hover{color:var(--accent)}
+@media (max-width:900px){.nav ul{display:none}}
+.tgl{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;flex:none;
+  margin-left:auto;border:1px solid var(--line-2);border-radius:7px;background:transparent;
+  color:var(--ink-3);cursor:pointer;padding:0;transition:all .2s var(--ease)}
+.nav ul ~ .tgl{margin-left:0}
+.tgl:hover{color:var(--accent);border-color:var(--accent)}
+.tgl:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.tgl svg{width:15px;height:15px;display:block}
+.tgl .sun{display:none}
+:root[data-theme='dark'] .tgl .sun{display:block}:root[data-theme='dark'] .tgl .moon{display:none}
+@media (prefers-color-scheme:dark){:root:not([data-theme='light']) .tgl .sun{display:block}
+  :root:not([data-theme='light']) .tgl .moon{display:none}}
+.btn{display:inline-flex;align-items:center;gap:8px;text-decoration:none;font-size:14px;font-weight:600;
+  padding:12px 22px;border-radius:7px;background:var(--accent);color:var(--bg);
+  border:1px solid var(--accent);transition:all .25s var(--ease)}
+.btn:hover{transform:translateY(-1px);box-shadow:var(--shadow)}
+.btn:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.btn.ghost{background:transparent;color:var(--accent)}
+.btn.ghost:hover{background:var(--accent-bg);box-shadow:none}
+.btn.sm{padding:8px 14px;font-size:13px}
+.nav-acts{display:flex;align-items:center;gap:9px;flex:none}
+.acts{display:flex;gap:16px;align-items:center;margin-top:34px;flex-wrap:wrap}
+.txtlink{font-size:14px;color:var(--ink-3);text-decoration:none;border-bottom:1px solid var(--line-2);
+  padding-bottom:2px;transition:all .2s var(--ease)}
+.txtlink:hover{color:var(--accent);border-color:var(--accent)}
+
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);
+  border:1px solid var(--line);border-radius:10px;overflow:hidden;margin-top:48px}
+.stats>div{background:var(--surface);padding:22px 20px}
+.stats .n{font-family:var(--mono);font-size:clamp(24px,3vw,32px);font-weight:600;
+  letter-spacing:-.03em;color:var(--accent);line-height:1;font-variant-numeric:tabular-nums}
+.stats .k{display:block;margin-top:9px;font-size:12.5px;color:var(--ink-3);line-height:1.45}
+@media (max-width:840px){.stats{grid-template-columns:repeat(2,1fr)}}
+
+/* the canvas mock — a small honest drawing of the tool, not a screenshot */
+.shot{border:1px solid var(--line-2);border-radius:11px;overflow:hidden;background:var(--surface);
+  box-shadow:var(--pop)}
+.shot-bar{display:flex;align-items:center;gap:6px;padding:8px 13px;border-bottom:1px solid var(--line);
+  background:var(--surface-2)}
+.shot-bar i{width:7px;height:7px;border-radius:50%;background:var(--line-strong);display:block}
+.shot-bar span{margin-left:8px;font-family:var(--mono);font-size:9.5px;letter-spacing:.07em;
+  color:var(--ink-4);text-transform:uppercase}
+.shot-body{padding:18px;background:
+  linear-gradient(var(--grid) 1px,transparent 1px) 0 0/28px 28px,
+  linear-gradient(90deg,var(--grid) 1px,transparent 1px) 0 0/28px 28px;background-color:var(--sunken)}
+.nodes{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width:620px){.nodes{grid-template-columns:1fr}}
+.node{border:1px solid var(--line-2);border-radius:9px;background:var(--surface);
+  box-shadow:var(--shadow);overflow:hidden}
+.node .nh{padding:9px 12px;border-bottom:1px solid var(--line);background:var(--surface-2);
+  display:flex;align-items:center;justify-content:space-between;gap:8px}
+.node .nh b{font-family:var(--mono);font-size:11.5px;font-weight:600;letter-spacing:-.01em}
+.node .cls{font-family:var(--mono);font-size:8.5px;letter-spacing:.07em;text-transform:uppercase;
+  padding:2px 6px;border-radius:5px;background:var(--accent-bg);color:var(--accent)}
+.node .grp{display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding:6px 12px;font-size:11px;border-bottom:1px solid var(--line)}
+.node .grp:last-child{border-bottom:0}
+.node .grp span{color:var(--ink-3);font-family:var(--mono);font-size:10.5px}
+.node .grp em{font-style:normal;color:var(--ink-4);font-family:var(--mono);font-size:10px}
+.node .grp .dot{width:6px;height:6px;border-radius:50%;display:inline-block;margin-right:6px}
+.dot.w{background:var(--warn)}.dot.c{background:var(--violet)}.dot.n{background:var(--line-strong)}
+.fnote{margin-top:14px;font-family:var(--mono);font-size:10.5px;color:var(--ink-4);line-height:1.7}
+.fnote b{color:var(--violet);font-style:italic}
+
+.feat{display:grid;grid-template-columns:1fr 1.15fr;gap:52px;align-items:center}
+.feat+.feat{margin-top:88px}
+.feat.flip .feat-copy{order:2}
+.feat h3{margin-top:14px;font-size:26px;font-weight:600;letter-spacing:-.025em}
+.feat p{color:var(--ink-3);font-size:15px;margin-top:14px}
+.feat ul{margin:18px 0 0;padding:0;list-style:none}
+.feat li{position:relative;padding-left:19px;margin-bottom:8px;font-size:14px;color:var(--ink-3)}
+.feat li::before{content:'';position:absolute;left:0;top:8px;width:5px;height:5px;border-radius:50%;
+  background:var(--accent)}
+@media (max-width:920px){.feat{grid-template-columns:1fr;gap:28px}.feat.flip .feat-copy{order:0}
+  .feat+.feat{margin-top:64px}}
+
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:44px}
+.grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;margin-top:44px}
+@media (max-width:820px){.grid-3,.grid-2{grid-template-columns:1fr}}
+.card{border:1px solid var(--line);border-radius:10px;background:var(--surface);padding:22px}
+.card h4{font-size:15.5px;font-weight:600}
+.card p{color:var(--ink-3);font-size:13.5px;margin-top:9px}
+.facts{display:grid;gap:24px}
+.fact{display:flex;gap:16px}
+.fact i{font-family:var(--mono);font-style:normal;font-size:11px;color:var(--accent);padding-top:3px;flex:none}
+.fact h4{font-size:15.5px;font-weight:600}
+.fact p{color:var(--ink-3);font-size:14px;margin-top:6px}
+.pull{border-left:2px solid var(--accent);padding:2px 0 2px 22px;font-size:20px;
+  letter-spacing:-.015em;line-height:1.5;color:var(--ink-2)}
+code{font-family:var(--mono);font-size:.88em;background:var(--sunken);padding:1px 5px;
+  border-radius:5px;color:var(--ink-2)}
+kbd{font-family:var(--mono);font-size:11px;background:var(--surface);border:1px solid var(--line-2);
+  border-bottom-width:2px;border-radius:6px;padding:2px 6px;color:var(--ink-2)}
+
+footer{border-top:1px solid var(--line);padding:38px 0;margin-top:20px}
+.foot{display:flex;justify-content:space-between;gap:28px;flex-wrap:wrap;align-items:flex-start}
+.foot .tl{font-size:15.5px;color:var(--ink-3);max-width:44ch}
+.foot .meta{font-family:var(--mono);font-size:11px;color:var(--ink-4);line-height:1.9;text-align:right}
+.foot .meta a{color:var(--accent);text-decoration:none}
+@media (max-width:680px){.foot .meta{text-align:left}}
+
+.rv{opacity:0;transform:translateY(14px);transition:opacity .6s var(--ease),transform .6s var(--ease)}
+.rv.in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){.rv{opacity:1;transform:none;transition:none}
+  html{scroll-behavior:auto}.btn:hover{transform:none}}
+html{scroll-behavior:smooth}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <a class="brand" href="#top">
+      <span class="brand-mark"><svg viewBox="0 0 32 32" fill="none" aria-hidden="true">
+        <rect x="3" y="4" width="12" height="9" rx="1.6" stroke="currentColor" stroke-width="2"/>
+        <rect x="17" y="19" width="12" height="9" rx="1.6" stroke="currentColor" stroke-width="2"/>
+        <path d="M15 8.5h6a2 2 0 0 1 2 2v8.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </svg></span>
+      <span>
+        <span class="brand-name">Schema Studio</span>
+        <span class="brand-sub">Legacy schema explorer</span>
+      </span>
+    </a>
+    <ul>
+      <li><a href="#explore">Explore</a></li>
+      <li><a href="#explain">Explain</a></li>
+      <li><a href="#decide">Decide</a></li>
+      <li><a href="#example">The example</a></li>
+      <li><a href="guide.html">Guide</a></li>
+      <li><a href="../index.html">Open the app</a></li>
+    </ul>
+    <button class="tgl" id="themeToggle" type="button" aria-label="Switch theme" title="Switch theme">
+      <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.5 14.6A8.5 8.5 0 1 1 9.4 3.5a7 7 0 0 0 11.1 11.1Z"/></svg>
+      <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.1 5.1l1.4 1.4M17.5 17.5l1.4 1.4M18.9 5.1l-1.4 1.4M6.5 17.5l-1.4 1.4"/></svg>
+    </button>
+    <span class="nav-acts"><a class="btn sm" href="../index.html">Open the app</a></span>
+  </div>
+</header>
+
+<main id="top">
+
+<section style="padding:84px 0 0">
+  <div class="wrap">
+    <div class="lbl">Legacy schema explorer</div>
+    <h1 class="h1" style="margin-top:20px;max-width:19ch">The model, as something you can <span style="color:var(--accent)">walk around</span>.</h1>
+    <p class="sub" style="font-size:18.5px">A static diagram is a picture of someone else's thinking. Schema Studio gives you the model as a place — grouped by concern, navigable, and honest about what it doesn't know. Every field says where it came from, how much of the population fills it, how sensitive it is, and whether it should be stored at all.</p>
+    <div class="acts">
+      <a class="btn" href="../index.html">Open the app</a>
+      <a class="btn ghost" href="guide.html">Read the guide</a>
+    </div>
+
+    <div class="rv" style="margin-top:56px">
+      <div class="shot">
+        <div class="shot-bar"><i></i><i></i><i></i><span>Schema Studio · Canvas · Core view</span></div>
+        <div class="shot-body">
+          <div class="nodes">
+            <div class="node">
+              <div class="nh"><b>policy</b><span class="cls">master</span></div>
+              <div class="grp"><span><i class="dot n"></i>Identity and codes</span><em>7</em></div>
+              <div class="grp"><span><i class="dot w"></i>Cover and limits</span><em>11</em></div>
+              <div class="grp"><span><i class="dot c"></i>Rating and premium</span><em>10</em></div>
+              <div class="grp"><span><i class="dot w"></i>Regulatory</span><em>6</em></div>
+              <div class="grp"><span><i class="dot n"></i>Distribution</span><em>6</em></div>
+            </div>
+            <div class="node">
+              <div class="nh"><b>policy_term</b><span class="cls">variant</span></div>
+              <div class="grp"><span><i class="dot c"></i>Billing and collection</span><em>8</em></div>
+              <div class="grp"><span><i class="dot c"></i>Claims position</span><em>6</em></div>
+              <div class="grp"><span><i class="dot w"></i>Stored instruments</span><em>5</em></div>
+              <div class="grp"><span><i class="dot n"></i>Lifecycle</span><em>7</em></div>
+              <div class="grp"><span><i class="dot n"></i>Operations</span><em>3</em></div>
+            </div>
+          </div>
+          <p class="fnote">
+            <b>&fnof;</b> amount_outstanding &nbsp;=&nbsp; amount_billed &minus; amount_paid &nbsp;<span style="color:var(--ink-5)">· computed, never stored</span><br>
+            <span style="color:var(--warn)">▲</span> agency_code &nbsp;<span style="color:var(--ink-5)">· agrees with broker_code on 99.4% of policies — two columns, one relationship</span>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section style="padding:72px 0 0">
+  <div class="wrap">
+    <div class="stats rv">
+      <div><div class="n">5</div><span class="k">worked schemas, one estate, three shapes of the same catalog</span></div>
+      <div><div class="n">283</div><span class="k">fields, each carrying its legacy source and census fill</span></div>
+      <div><div class="n">4</div><span class="k">export formats — JSON, SQL DDL, Mermaid, Markdown</span></div>
+      <div><div class="n">0</div><span class="k">network calls. It runs entirely in the browser</span></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="grid-2" style="gap:56px;margin-top:0;align-items:start">
+      <div class="rv">
+        <div class="lbl">The problem</div>
+        <p class="h2" style="margin-top:20px">A schema diagram tells you the shape. It never tells you <span style="color:var(--accent)">what to do about it</span>.</p>
+      </div>
+      <div class="facts rv" style="padding-top:6px">
+        <div class="fact"><i>01</i><div><h4>Two hundred columns is not reviewable</h4><p>Dump every field into a box and nobody can see the structure. Grouped by business concern, the same table becomes six things a person can hold in their head.</p></div></div>
+        <div class="fact"><i>02</i><div><h4>The interesting part is the reasoning</h4><p>Which columns say the same thing, which are arithmetic over their neighbours, which nobody can name — that is the work. A diagram that only shows boxes hides all of it.</p></div></div>
+        <div class="fact"><i>03</i><div><h4>Decisions need evidence attached</h4><p>"Drop this field" is a claim. "Empty in all 604,812 records" is an argument. The second one can be signed off; the first starts a meeting.</p></div></div>
+      </div>
+    </div>
+    <p class="pull rv" style="margin-top:60px;max-width:80ch">
+      Schema Studio carries the evidence with the model — so a review is someone checking an argument,
+      not someone taking your word for it.
+    </p>
+  </div>
+</section>
+
+<hr class="rule">
+
+<section id="explore">
+  <div class="wrap">
+    <div class="rv" style="max-width:62ch">
+      <div class="lbl">Explore</div>
+      <h2 class="h2" style="margin-top:18px">Everything the canvas does</h2>
+      <p class="sub">Drag, pan, zoom, auto-arrange by data class, domain and connection. Two density modes: Core shows field groups, Detail shows every column.</p>
+    </div>
+
+    <div style="margin-top:68px">
+      <div class="feat rv">
+        <div class="feat-copy">
+          <div class="lbl">Canvas</div>
+          <h3>Navigate a large model without losing the thread</h3>
+          <p>Tables lay out by what they are and what they touch, rather than by the order someone added them: master and reference on the left, transactional and derived on the right, each column grouped by domain. Switch to Core view and a 113-field table becomes five named groups; switch to Detail and every column is back.</p>
+          <ul>
+            <li>Drag tables, pan and zoom, fit to screen, auto-arrange</li>
+            <li>Straight or orthogonal relationship lines</li>
+            <li>Full undo and redo with a history panel — <kbd>⌘Z</kbd> <kbd>⌘⇧Z</kbd></li>
+            <li>Search every table and field with <kbd>⌘F</kbd></li>
+          </ul>
+        </div>
+        <div class="shot">
+          <div class="shot-bar"><i></i><i></i><i></i><span>Inspector · Field</span></div>
+          <div class="shot-body" style="background:var(--surface);background-image:none">
+            <div style="font-family:var(--mono);font-size:12px;color:var(--ink);font-weight:600">amount_outstanding</div>
+            <div style="font-family:var(--mono);font-size:10.5px;color:var(--ink-4);margin-top:3px">POLTERM&lt;27&gt; OUTST · number · 91.3% filled</div>
+            <div style="margin-top:14px;padding:11px 13px;border:1px solid var(--line);border-radius:8px;background:var(--surface-2)">
+              <div class="lbl" style="color:var(--violet)">Computed, not stored</div>
+              <div style="font-family:var(--mono);font-size:11px;color:var(--ink-2);margin-top:6px">amount_billed &minus; amount_paid</div>
+            </div>
+            <div style="margin-top:10px;padding:11px 13px;border-left:2px solid var(--warn);background:var(--warn-bg);border-radius:0 6px 6px 0">
+              <div class="lbl warn">Review finding</div>
+              <div style="font-size:11.5px;color:var(--ink-2);margin-top:5px;line-height:1.5">Billed minus paid on 11,946 of 11,947 sampled rows. A balance that is arithmetic, not a fact.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="feat flip rv" id="explain">
+        <div class="feat-copy">
+          <div class="lbl">Explain</div>
+          <h3>Walkthroughs and rationale, built in</h3>
+          <p>Author a guided tour that pans the canvas through a sequence of focused tables, with a note at each step and the open questions attached. Pair it with a rationale page that explains why the model is shaped the way it is.</p>
+          <ul>
+            <li>Steps focus the canvas on named tables as you advance</li>
+            <li>Each step carries the business flow it supports and its open questions</li>
+            <li>Rationale pages take headings, prose, bullets, tables and callouts</li>
+            <li>Both are plain JSON — generate them from your model, never by hand</li>
+          </ul>
+        </div>
+        <div class="shot">
+          <div class="shot-bar"><i></i><i></i><i></i><span>Walkthrough · Step 3 of 5</span></div>
+          <div class="shot-body" style="background:var(--surface);background-image:none">
+            <div style="border-left:2px solid var(--accent);padding-left:14px">
+              <div class="lbl">03 · The status hidden in the search key</div>
+              <p style="margin-top:9px;color:var(--ink-3);font-size:12.5px;line-height:1.6">
+                PMAST has no status attribute. 41,206 policies — 6.81% — carry a lifecycle word inside
+                the alphabetical search key instead. Status is invisible to any query that does not
+                string-match.
+              </p>
+            </div>
+            <div style="margin-top:14px;display:flex;gap:7px;flex-wrap:wrap">
+              <span style="font-family:var(--mono);font-size:9.5px;padding:3px 8px;border-radius:5px;background:var(--accent-bg);color:var(--accent)">focus: policy</span>
+              <span style="font-family:var(--mono);font-size:9.5px;padding:3px 8px;border-radius:5px;background:var(--sunken);color:var(--ink-4)">?&nbsp; Is the vocabulary complete</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="rule">
+
+<section id="decide">
+  <div class="wrap">
+    <div class="rv" style="max-width:64ch">
+      <div class="lbl">Decide</div>
+      <h2 class="h2" style="margin-top:18px">Mark it, review it, export it</h2>
+      <p class="sub">Exploring is half of it. The other half is recording what you decided and handing it to whoever builds the thing.</p>
+    </div>
+    <div class="grid-3 rv">
+      <div class="card">
+        <h4>Mark fields for deletion</h4>
+        <p>Tick a field and the canvas shows the blast radius: any foreign key pointing at it becomes <em>orphaned</em>, derived live rather than stored, so un-marking always restores cleanly. A primary key is never silently dropped.</p>
+      </div>
+      <div class="card">
+        <h4>Schema review</h4>
+        <p>A built-in pass over the loaded model surfaces findings by severity — missing keys, dangling references, tables with no relationships, fields that look mis-typed against their own description.</p>
+      </div>
+      <div class="card">
+        <h4>Export in four shapes</h4>
+        <p>JSON to round-trip, SQL DDL to build from, Mermaid to paste into a document, Markdown to review in a pull request. Dropped fields stay in the DDL as comments, so the diff still shows what left.</p>
+      </div>
+    </div>
+
+    <div class="grid-3 rv" style="margin-top:18px">
+      <div class="card">
+        <h4>It opens on a start screen</h4>
+        <p>Nothing loads until you choose it — import your own, or pick one of the eight bundled models. The choice is remembered, so the next visit goes straight back to it. There is no fixed vocabulary either: whatever words your schema uses for domain and data class are taken from the data, labelled and given a colour, so any estate renders without being registered anywhere.</p>
+      </div>
+      <div class="card">
+        <h4>Field properties the inspector understands</h4>
+        <p>Beyond name and type: <code>legacyField</code>, <code>fillPct</code>, <code>category</code>, <code>sensitivity</code>, <code>dashboardRole</code>, <code>storage</code>, <code>computed</code>, <code>warning</code> and <code>issues</code>. Supply them and the tool renders them; leave them out and it degrades quietly.</p>
+      </div>
+      <div class="card">
+        <h4>Bring your own schema</h4>
+        <p>Import is the first thing the start screen offers: a JSON file shaped <code>{ tables, relationships }</code>, or SQL DDL it parses for you. Read in the browser and never uploaded, so a real schema needs no commit and no server. To bundle one into the build instead, drop it in <code>src/data/</code> and register it.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="rule">
+
+<section id="example">
+  <div class="wrap">
+    <div class="rv" style="max-width:64ch">
+      <div class="lbl warn">The worked example</div>
+      <h2 class="h2" style="margin-top:18px">Ardent Mutual — a legacy estate with real problems in it</h2>
+      <p class="sub">A fictional general-insurance carrier on a 1980s MultiValue system. Every record count and attribute number is invented; the <em>shape</em> is the point, and so are the findings a tool like this exists to surface.</p>
+    </div>
+
+    <div class="grid-2 rv" style="margin-top:48px">
+      <div class="card">
+        <div class="lbl">Redundancy</div>
+        <h4 style="margin-top:10px">Sums stored beside their own parts</h4>
+        <p><code>sum_insured_total</code> equals buildings plus contents on every sampled policy. So does the premium tax, the commission amount and the outstanding balance. Each was stored; each can disagree with its own inputs.</p>
+      </div>
+      <div class="card">
+        <div class="lbl">Duplication</div>
+        <h4 style="margin-top:10px">Two columns, one relationship</h4>
+        <p><code>agency_code</code> agrees with <code>broker_code</code> on 99.4% of policies across 3,118 distinct values. The 0.6% that differ are the interesting part.</p>
+      </div>
+      <div class="card">
+        <div class="lbl">Hidden state</div>
+        <h4 style="margin-top:10px">Status written into the search key</h4>
+        <p>The policy file has no status column, so the business writes LAPSED, CANCELLED, VOID, NTU and DECLINED into the alphabetical search key — on 6.81% of policies.</p>
+      </div>
+      <div class="card">
+        <div class="lbl">Shape</div>
+        <h4 style="margin-top:10px">Parallel arrays that are really rows</h4>
+        <p>Endorsement codes and their texts, rating factors and their values, adjustment dates and their premium deltas — four pairs kept in step by position alone.</p>
+      </div>
+    </div>
+
+    <p class="sub rv" style="margin-top:36px;max-width:76ch">
+      Five schemas ship with it: the two-table field disposition, a minimal quote-to-bind-to-claim
+      model, and one policyholder catalog projected three ways — normalised, denormalised and
+      minimal. Plus three small starter schemas for orientation.
+    </p>
+  </div>
+</section>
+
+<hr class="rule">
+
+<section>
+  <div class="wrap" style="text-align:center">
+    <div class="rv" style="max-width:60ch;margin:0 auto">
+      <div class="lbl">Get started</div>
+      <h2 class="h2" style="margin-top:18px">Clone it and it runs</h2>
+      <p class="sub" style="margin:18px auto 0">No backend, no account, no network calls. The guide covers every feature, the JSON shape, and how to bring your own schema in.</p>
+      <div style="margin-top:26px;display:inline-block;text-align:left;border:1px solid var(--line);
+                  border-radius:9px;background:var(--surface);padding:16px 20px;font-family:var(--mono);
+                  font-size:12.5px;color:var(--ink-2);line-height:1.9">
+        npm install<br>npm run dev
+      </div>
+      <div class="acts" style="justify-content:center">
+        <a class="btn" href="../index.html">Open the app</a>
+        <a class="btn ghost" href="guide.html">Read the guide</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap foot">
+    <div class="tl">Schema Studio — the model, as something you can walk around.</div>
+    <div class="meta">
+      <a href="../index.html">Open the app</a> · <a href="guide.html">Guide</a> · <a href="#explore">Features</a> · <a href="#example">Example</a><br>
+      Runs in the browser · no network calls
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  'use strict';
+  var KEY='ss-site-theme', root=document.documentElement;
+  function stored(){try{return localStorage.getItem(KEY);}catch(e){return null;}}
+  function resolved(){
+    var t=root.getAttribute('data-theme');
+    if(t==='light'||t==='dark') return t;
+    return window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
+  }
+  function apply(t,persist){
+    root.setAttribute('data-theme',t);
+    if(persist){try{localStorage.setItem(KEY,t);}catch(e){}}
+    var b=document.getElementById('themeToggle');
+    if(b) b.setAttribute('aria-label',t==='dark'?'Switch to light theme':'Switch to dark theme');
+  }
+  var btn=document.getElementById('themeToggle');
+  if(btn) btn.addEventListener('click',function(){apply(resolved()==='dark'?'light':'dark',true);});
+  if(stored()) apply(stored(),false);
+
+  var els=document.querySelectorAll('.rv');
+  if(!('IntersectionObserver' in window)||window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+    for(var i=0;i<els.length;i++) els[i].classList.add('in'); return;
+  }
+  var io=new IntersectionObserver(function(en){
+    en.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+  },{rootMargin:'0px 0px -10% 0px',threshold:.05});
+  for(var j=0;j<els.length;j++) io.observe(els[j]);
+})();
+</script>
+</body>
+</html>

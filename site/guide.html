@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Schema Studio — Guide</title>
+<meta name="description" content="Every feature of Schema Studio and how to use it: the canvas, the inspector, walkthroughs, rationale pages, schema review, marking fields for deletion, exports, and the JSON shape for bringing your own schema.">
+<meta name="color-scheme" content="light dark">
+<script>(function(){try{
+var t=localStorage.getItem('ss-site-theme');
+if(t!=='light'&&t!=='dark'){
+  var app=localStorage.getItem('schemastudio.theme');
+  if(app)t={slate:'dark',midnight:'dark',carbon:'dark',pine:'dark'}[app]||'light';
+}
+if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);
+}catch(e){}})();</script>
+<style>
+/* Schema Studio — site. Self-contained: no build step, no local assets.
+   Tokens are lifted from the app's own stylesheet (src/styles.css: the "paper"
+   light theme and the "slate" dark one) so the site and the tool read as one
+   product rather than two.
+
+   Three theme states, not two: an explicit choice stamps data-theme on the
+   root, while the default "system" setting stamps nothing and only
+   prefers-color-scheme separates light from dark. Light lives on bare :root;
+   dark is declared twice — once behind the media query, once behind
+   [data-theme='dark'] so the toggle wins both ways. No colour is ever declared
+   only inside a media query. */
+:root{
+  --bg:#f7f7f5; --grid:#e6e6e2; --surface:#ffffff; --surface-2:#fafaf8; --sunken:#f1f1ee;
+  --ink:#0c0c0b; --ink-2:#353532; --ink-3:#65655f; --ink-4:#96968f; --ink-5:#c6c6bf;
+  --line:#ebebe7; --line-2:#dedeD8; --line-strong:#b4b4ac;
+  --accent:oklch(0.54 0.16 258); --accent-bg:oklch(0.955 0.030 258);
+  --warn:oklch(0.62 0.13 65);  --warn-bg:oklch(0.96 0.05 75);
+  --danger:oklch(0.55 0.16 25); --danger-bg:oklch(0.96 0.04 25);
+  --good:oklch(0.55 0.10 155); --good-bg:oklch(0.96 0.04 155);
+  --violet:oklch(0.55 0.12 300);
+  --shadow:0 2px 4px -1px rgba(20,18,14,calc(0.05*1)),0 10px 24px -6px rgba(20,18,14,calc(0.11*1));
+  --pop:0 4px 10px -2px rgba(20,18,14,calc(0.07*1)),0 20px 44px -12px rgba(20,18,14,calc(0.20*1));
+  --sans:ui-sans-serif,system-ui,-apple-system,"SF Pro Text","Segoe UI Variable Text","Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono","JetBrains Mono","Cascadia Mono",Menlo,Consolas,monospace;
+  --ease:cubic-bezier(.22,1,.36,1); --wrap:1140px;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme='light']){
+    --bg:#0b0c0e; --grid:#17191d; --surface:#131519; --surface-2:#191c21; --sunken:#0e1013;
+    --ink:#f2f3f5; --ink-2:#c6cad0; --ink-3:#8d939c; --ink-4:#626871; --ink-5:#3b4048;
+    --line:#232730; --line-2:#2f343e; --line-strong:#4a515c;
+    --accent:oklch(0.76 0.15 250); --accent-bg:oklch(0.30 0.07 250);
+    --warn:oklch(0.78 0.13 70);  --warn-bg:oklch(0.26 0.07 70);
+    --danger:oklch(0.72 0.16 25); --danger-bg:oklch(0.26 0.07 25);
+    --good:oklch(0.74 0.10 155); --good-bg:oklch(0.26 0.06 155);
+    --violet:oklch(0.76 0.11 300);
+    --shadow:0 2px 4px -1px rgba(0,0,0,calc(0.05*2.6)),0 10px 24px -6px rgba(0,0,0,calc(0.11*2.6)); --pop:0 4px 10px -2px rgba(0,0,0,calc(0.07*2.6)),0 20px 44px -12px rgba(0,0,0,calc(0.20*2.6));
+    color-scheme:dark;
+  }
+}
+:root[data-theme='dark']{
+  --bg:#0b0c0e; --grid:#17191d; --surface:#131519; --surface-2:#191c21; --sunken:#0e1013;
+  --ink:#f2f3f5; --ink-2:#c6cad0; --ink-3:#8d939c; --ink-4:#626871; --ink-5:#3b4048;
+  --line:#232730; --line-2:#2f343e; --line-strong:#4a515c;
+  --accent:oklch(0.76 0.15 250); --accent-bg:oklch(0.30 0.07 250);
+  --warn:oklch(0.78 0.13 70);  --warn-bg:oklch(0.26 0.07 70);
+  --danger:oklch(0.72 0.16 25); --danger-bg:oklch(0.26 0.07 25);
+  --good:oklch(0.74 0.10 155); --good-bg:oklch(0.26 0.06 155);
+  --violet:oklch(0.76 0.11 300);
+  --shadow:0 2px 4px -1px rgba(0,0,0,calc(0.05*2.6)),0 10px 24px -6px rgba(0,0,0,calc(0.11*2.6)); --pop:0 4px 10px -2px rgba(0,0,0,calc(0.07*2.6)),0 20px 44px -12px rgba(0,0,0,calc(0.20*2.6));
+  color-scheme:dark;
+}
+
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);letter-spacing:-0.011em;font-size:16px;
+  line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+/* the faint drafting grid the canvas itself uses */
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.5;
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),
+                   linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:32px 32px;
+  mask-image:radial-gradient(1000px 700px at 78% -8%,#000,transparent 70%)}
+main,header,footer{position:relative;z-index:1}
+.wrap{max-width:var(--wrap);margin:0 auto;padding:0 28px}
+h1,h2,h3,h4{margin:0;line-height:1.15;letter-spacing:-.02em}
+p{margin:0}a{color:inherit}
+.lbl{font-family:var(--mono);font-size:10.5px;font-weight:600;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--accent)}
+.lbl.warn{color:var(--warn)}.lbl.muted{color:var(--ink-4)}
+.h1{font-size:clamp(34px,5vw,56px);font-weight:600;letter-spacing:-.035em;line-height:1.05}
+.h2{font-size:clamp(25px,3.4vw,36px);font-weight:600;letter-spacing:-.028em}
+.sub{color:var(--ink-3);font-size:17px;max-width:62ch;margin-top:18px}
+.mono{font-family:var(--mono)}
+section{padding:96px 0}
+hr.rule{height:1px;background:var(--line);border:0;margin:0}
+
+header{position:sticky;top:0;z-index:60;background:color-mix(in srgb,var(--bg) 88%,transparent);
+  backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid var(--line)}
+.nav{display:flex;align-items:center;gap:18px;height:62px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink)}
+.brand-mark{width:26px;height:26px;flex:none;color:var(--accent)}
+.brand-mark svg{width:100%;height:100%;display:block}
+.brand-name{font-size:16px;font-weight:600;letter-spacing:-.02em}
+.brand-sub{display:block;font-family:var(--mono);font-size:9px;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--ink-4);margin-top:1px}
+.nav ul{display:flex;gap:24px;list-style:none;margin:0 0 0 auto;padding:0;font-size:13.5px;color:var(--ink-3)}
+.nav ul a{text-decoration:none;transition:color .2s var(--ease)}
+.nav ul a:hover{color:var(--accent)}
+@media (max-width:900px){.nav ul{display:none}}
+.tgl{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;flex:none;
+  margin-left:auto;border:1px solid var(--line-2);border-radius:7px;background:transparent;
+  color:var(--ink-3);cursor:pointer;padding:0;transition:all .2s var(--ease)}
+.nav ul ~ .tgl{margin-left:0}
+.tgl:hover{color:var(--accent);border-color:var(--accent)}
+.tgl:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.tgl svg{width:15px;height:15px;display:block}
+.tgl .sun{display:none}
+:root[data-theme='dark'] .tgl .sun{display:block}:root[data-theme='dark'] .tgl .moon{display:none}
+@media (prefers-color-scheme:dark){:root:not([data-theme='light']) .tgl .sun{display:block}
+  :root:not([data-theme='light']) .tgl .moon{display:none}}
+.btn{display:inline-flex;align-items:center;gap:8px;text-decoration:none;font-size:14px;font-weight:600;
+  padding:12px 22px;border-radius:7px;background:var(--accent);color:var(--bg);
+  border:1px solid var(--accent);transition:all .25s var(--ease)}
+.btn:hover{transform:translateY(-1px);box-shadow:var(--shadow)}
+.btn:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.btn.ghost{background:transparent;color:var(--accent)}
+.btn.ghost:hover{background:var(--accent-bg);box-shadow:none}
+.btn.sm{padding:8px 14px;font-size:13px}
+.nav-acts{display:flex;align-items:center;gap:9px;flex:none}
+.acts{display:flex;gap:16px;align-items:center;margin-top:34px;flex-wrap:wrap}
+.txtlink{font-size:14px;color:var(--ink-3);text-decoration:none;border-bottom:1px solid var(--line-2);
+  padding-bottom:2px;transition:all .2s var(--ease)}
+.txtlink:hover{color:var(--accent);border-color:var(--accent)}
+
+
+/* ── docs shell: sticky sidebar under the shared header ─────────────── */
+.docs{display:grid;grid-template-columns:274px 1fr;min-height:calc(100vh - 63px)}
+.docs-nav{position:sticky;top:63px;align-self:start;height:calc(100vh - 63px);overflow-y:auto;
+  border-right:1px solid var(--line);background:var(--surface-2);padding:24px 16px 28px}
+.docs-nav .sect-t{font-family:var(--mono);font-size:9.5px;font-weight:600;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--ink-4);padding:14px 10px 6px}
+.docs-nav .sect-t:first-child{padding-top:0}
+.docs-nav a{display:block;padding:7px 10px;border-radius:7px;text-decoration:none;font-size:13.5px;
+  color:var(--ink-3);border-left:2px solid transparent;transition:all .18s var(--ease)}
+.docs-nav a:hover{background:var(--surface);color:var(--ink)}
+.docs-nav a.active{background:var(--accent-bg);color:var(--accent);border-left-color:var(--accent);font-weight:500}
+.docs-main{min-width:0;padding:44px 48px 96px}
+.docs-main .inner{max-width:780px}
+@media (max-width:900px){
+  .docs{grid-template-columns:1fr}
+  .docs-nav{position:static;height:auto;border-right:0;border-bottom:1px solid var(--line);
+    display:flex;gap:4px;overflow-x:auto;padding:12px 16px;white-space:nowrap}
+  .docs-nav .sect-t{display:none}
+  .docs-nav a{border-left:0;border-bottom:2px solid transparent;padding:6px 11px}
+  .docs-nav a.active{border-left:0;border-bottom-color:var(--accent)}
+  .docs-main{padding:28px 20px 72px}
+}
+.docs-main h2{font-size:26px;font-weight:600;letter-spacing:-.025em;margin:0 0 4px;scroll-margin-top:80px}
+.docs-main h3{font-size:17px;font-weight:600;letter-spacing:-.015em;margin:34px 0 8px;scroll-margin-top:80px}
+.docs-main h2+.lede{color:var(--ink-3);font-size:15.5px;margin:10px 0 0;max-width:68ch}
+.docs-main p{color:var(--ink-3);font-size:14.5px;margin:12px 0 0;max-width:68ch}
+.docs-main ul{margin:12px 0 0;padding-left:20px;color:var(--ink-3);font-size:14.5px;max-width:68ch}
+.docs-main li{margin:6px 0}
+.docs-main section{padding:0 0 56px;border-bottom:1px solid var(--line);margin-bottom:44px}
+.docs-main section:last-of-type{border-bottom:0}
+pre{background:var(--sunken);border:1px solid var(--line);border-radius:9px;padding:15px 17px;
+  overflow-x:auto;font-family:var(--mono);font-size:12.5px;line-height:1.65;color:var(--ink-2);margin:16px 0 0}
+pre .c{color:var(--ink-4)}pre .k{color:var(--accent)}pre .s{color:var(--good)}
+table.ref{width:100%;border-collapse:collapse;margin-top:16px;font-size:13.5px}
+table.ref th{text-align:left;font-family:var(--mono);font-size:9.5px;font-weight:600;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--ink-4);padding:8px 12px;border-bottom:1px solid var(--line-2)}
+table.ref td{padding:10px 12px;border-bottom:1px solid var(--line);color:var(--ink-3);vertical-align:top}
+table.ref td:first-child{color:var(--ink);font-family:var(--mono);font-size:12.5px;white-space:nowrap}
+table.ref tr:last-child td{border-bottom:0}
+@media (max-width:700px){table.ref,table.ref tbody,table.ref tr,table.ref td{display:block;width:100%}
+  table.ref thead{display:none}table.ref tr{border-bottom:1px solid var(--line);padding:6px 0 12px}
+  table.ref td{border:0;padding:3px 0}}
+.callout{border-left:2px solid var(--accent);background:var(--accent-bg);border-radius:0 7px 7px 0;
+  padding:13px 16px;margin:18px 0 0;max-width:68ch}
+.callout.warn{border-left-color:var(--warn);background:var(--warn-bg)}
+.callout.good{border-left-color:var(--good);background:var(--good-bg)}
+.callout p{margin:5px 0 0;color:var(--ink-2);font-size:13.5px}
+.keys{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:9px;margin-top:16px}
+.keys div{display:flex;align-items:center;gap:10px;font-size:13.5px;color:var(--ink-3);
+  border:1px solid var(--line);border-radius:8px;padding:9px 12px;background:var(--surface)}
+code{font-family:var(--mono);font-size:.88em;background:var(--sunken);padding:1px 5px;border-radius:5px;color:var(--ink-2)}
+kbd{font-family:var(--mono);font-size:11px;background:var(--surface);border:1px solid var(--line-2);
+  border-bottom-width:2px;border-radius:6px;padding:2px 6px;color:var(--ink-2);flex:none}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+html{scroll-behavior:smooth}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <a class="brand" href="index.html">
+      <span class="brand-mark"><svg viewBox="0 0 32 32" fill="none" aria-hidden="true">
+        <rect x="3" y="4" width="12" height="9" rx="1.6" stroke="currentColor" stroke-width="2"/>
+        <rect x="17" y="19" width="12" height="9" rx="1.6" stroke="currentColor" stroke-width="2"/>
+        <path d="M15 8.5h6a2 2 0 0 1 2 2v8.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </svg></span>
+      <span>
+        <span class="brand-name">Schema Studio</span>
+        <span class="brand-sub">Guide</span>
+      </span>
+    </a>
+    <ul>
+      <li><a href="index.html">Overview</a></li>
+      <li><a href="../index.html">Open the app</a></li>
+      <li><a href="#canvas">Canvas</a></li>
+      <li><a href="#authoring">Authoring</a></li>
+      <li><a href="#schema">JSON shape</a></li>
+    </ul>
+    <button class="tgl" id="themeToggle" type="button" aria-label="Switch theme" title="Switch theme">
+      <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.5 14.6A8.5 8.5 0 1 1 9.4 3.5a7 7 0 0 0 11.1 11.1Z"/></svg>
+      <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.1 5.1l1.4 1.4M17.5 17.5l1.4 1.4M18.9 5.1l-1.4 1.4M6.5 17.5l-1.4 1.4"/></svg>
+    </button>
+    <span class="nav-acts"><a class="btn sm" href="../index.html">Open the app</a></span>
+  </div>
+</header>
+
+<div class="docs">
+  <nav class="docs-nav" aria-label="Guide sections">
+    <div class="sect-t">Start</div>
+    <a href="#install">Install and run</a>
+    <a href="#tour">A five-minute tour</a>
+    <div class="sect-t">Using it</div>
+    <a href="#start">The start screen</a>
+    <a href="#canvas">The canvas</a>
+    <a href="#inspector">The inspector</a>
+    <a href="#search">Search and history</a>
+    <a href="#walkthroughs">Walkthroughs</a>
+    <a href="#rationale">Rationale pages</a>
+    <a href="#review">Schema review</a>
+    <a href="#dropped">Marking fields</a>
+    <a href="#export">Import and export</a>
+    <a href="#themes">Themes</a>
+    <div class="sect-t">Authoring</div>
+    <a href="#authoring">Add your own schema</a>
+    <a href="#schema">The JSON shape</a>
+    <a href="#fields">Field properties</a>
+    <a href="#groups">Field groups</a>
+    <a href="#authoring-walk">Writing a walkthrough</a>
+    <a href="#authoring-rat">Writing a rationale</a>
+    <div class="sect-t">Reference</div>
+    <a href="#example">The bundled example</a>
+    <a href="#keys">Keyboard shortcuts</a>
+    <a href="#layout">Project layout</a>
+  </nav>
+
+  <main class="docs-main">
+  <div class="inner">
+
+  <section id="install">
+    <h2>Install and run</h2>
+    <p class="lede">Node 18 or newer. No backend, no account, no network calls at runtime.</p>
+<pre><span class="c"># install and start the dev server</span>
+npm install
+npm run dev        <span class="c"># http://localhost:5310</span>
+
+<span class="c"># static bundle, output in dist/</span>
+npm run build
+npm run preview</pre>
+    <p>A build writes three pages: the app at <code>dist/index.html</code>, and these two under <code>dist/site/</code>, so the bundle is self-contained and the app can link to its own documentation.</p>
+    <p>The <code>site/</code> folder is still plain HTML with no build step of its own — open the files directly, or serve the folder with anything, and they work.</p>
+  </section>
+
+  <section id="tour">
+    <h2>A five-minute tour</h2>
+    <p class="lede">The fastest route to understanding what the tool is for.</p>
+    <ul>
+      <li>It opens on the <b>start screen</b>. Import your own JSON or SQL DDL at the top, or pick one of the bundled models below it. Pick <b>policy / policy_term field disposition</b> — two tables, 113 fields.</li>
+      <li>You are in <b>Core</b> view — each table shows named field groups rather than every column. Switch to <b>Detail</b> in the toolbar to see the columns.</li>
+      <li>Click <code>policy_term</code>, then the field <code>amount_outstanding</code>. The inspector shows its legacy source, its fill rate, that it is <b>computed rather than stored</b>, and the finding that says why.</li>
+      <li>Open <b>Walkthrough</b> and play <i>Policy vs PolicyTerm</i>. Five steps, each focusing the canvas on the tables it is talking about.</li>
+      <li>Open <b>Rationale</b> for the same schema — the long-form argument, including what combines into what and why.</li>
+      <li>Switch schema from the <b>Import</b> menu to <b>Policyholder: normalised</b>, then <b>denormalised</b>, then <b>minimal</b>. Same catalog, three shapes.</li>
+    </ul>
+    <div class="callout">
+      <div class="lbl">Start here, and getting back</div>
+      <p>Your choice is remembered, so the next visit opens straight onto that schema instead of asking again. Click <b>Schema Studio</b> in the top-left corner to return to the start screen — the subtitle there is always the schema you are looking at.</p>
+    </div>
+  </section>
+
+  <section id="start">
+    <h2>The start screen</h2>
+    <p class="lede">Nothing is loaded until you choose something.</p>
+    <p><b>Bring your own</b> comes first: a JSON schema or a SQL DDL file, read in the browser and never uploaded. Below it are the bundled models — the Ardent Mutual worked example, and three small starter schemas for orientation.</p>
+    <p>Your choice is remembered in <code>localStorage</code>, so a return visit opens straight onto it. To come back and pick something else, click <b>Schema Studio</b> in the top-left corner — its subtitle always names the schema currently loaded. Once a schema is open, <kbd>Esc</kbd> closes the start screen without changing anything.</p>
+  </section>
+
+  <section id="canvas">
+    <h2>The canvas</h2>
+    <p class="lede">Drag, pan, zoom, and let the layout engine arrange by data class, domain and connection.</p>
+    <h3>Moving around</h3>
+    <ul>
+      <li><b>Pan</b> — drag empty canvas, or scroll</li>
+      <li><b>Zoom</b> — the toolbar buttons, or scroll with a modifier</li>
+      <li><b>Fit to screen</b> — frames every table in view</li>
+      <li><b>Drag a table</b> — position is kept in the schema and survives export</li>
+    </ul>
+    <h3>Layout</h3>
+    <p><b>Auto-arrange</b> places tables in three zones by data class — master and reference on the left, variant and config in the middle, transactional and derived on the right — groups each zone by domain, then resolves overlaps. It is deterministic: run it twice and you get the same arrangement, so it is safe to use as a reset.</p>
+    <h3>Density</h3>
+    <p><b>Core</b> renders each table as its field groups with a count and a marker per group: a dot for a group containing warnings, another for one containing computed fields. <b>Detail</b> renders every field. Core is the right altitude for a review conversation; Detail is for working.</p>
+    <h3>Relationship lines</h3>
+    <p>Straight or orthogonal. Cardinality is drawn from each relationship's <code>type</code> — <code>1:1</code>, <code>1:N</code>, <code>N:1</code>, <code>N:M</code>.</p>
+  </section>
+
+  <section id="inspector">
+    <h2>The inspector</h2>
+    <p class="lede">Click any table or field. The right-hand panel shows everything the schema knows about it.</p>
+    <p>For a <b>table</b>: its data class, domain, description and purpose, its source of truth and write owner, and the conversation point — the open question this table exists to raise.</p>
+    <p>For a <b>field</b>: type, keys, nullability, the legacy source it came from, census fill, its category and dashboard role, its sensitivity class, whether it is stored or derived, any formula, and any review findings recorded against it.</p>
+    <p><b>Edit mode</b> turns the inspector into a form — rename fields, change types, toggle keys, add and remove tables. Every edit goes through the undo stack.</p>
+    <div class="callout">
+      <div class="lbl">Degrades quietly</div>
+      <p>Every enrichment property is optional. A minimal <code>{name, type}</code> field renders fine; supply more and more of the panel lights up.</p>
+    </div>
+  </section>
+
+  <section id="search">
+    <h2>Search and history</h2>
+    <p class="lede"><kbd>⌘F</kbd> searches tables and fields together.</p>
+    <p>Matches highlight on the canvas and in the group rows, so a field buried inside a collapsed group still shows you which table to open. <kbd>Esc</kbd> clears.</p>
+    <p>The <b>History</b> panel lists every change in the session. Undo and redo step through it; the list is the audit trail for a working session, not a saved artifact.</p>
+  </section>
+
+  <section id="walkthroughs">
+    <h2>Walkthroughs</h2>
+    <p class="lede">A guided tour that pans the canvas through a sequence of focused tables.</p>
+    <p>Pick one from the Walkthrough menu and step forward. Each step can focus specific tables — everything else dims — and carries a title, a body, the business flows it touches, and any open questions.</p>
+    <p>Walkthroughs are the difference between handing someone a diagram and walking them through an argument. Author one per model and a stakeholder can follow it without you in the room.</p>
+  </section>
+
+  <section id="rationale">
+    <h2>Rationale pages</h2>
+    <p class="lede">Long-form design notes, rendered as an overlay beside the model.</p>
+    <p>A rationale page is a list of typed sections: headings, prose, bullet lists, small reference tables, and coloured callouts. It answers the questions a diagram cannot — why this boundary, what was combined into what, what is still open.</p>
+  </section>
+
+  <section id="review">
+    <h2>Schema review</h2>
+    <p class="lede">A pass over the loaded model that surfaces structural problems.</p>
+    <p>Findings are grouped by severity and each one jumps to the thing it is about. It catches the errors that are easy to introduce while editing and hard to see on a canvas — a table with no primary key, a foreign key pointing at a field that no longer exists, a table with no relationships at all, a field whose declared type contradicts its own description.</p>
+  </section>
+
+  <section id="dropped">
+    <h2>Marking fields for deletion</h2>
+    <p class="lede">Record a decision to drop a column, and see what it takes with it.</p>
+    <p>Tick <b>Marked for deletion</b> on a field and it is stored on the field as <code>drop: true</code> — exported, undoable, and visible to whoever reviews the diff.</p>
+    <p>Anything whose foreign key points at a marked field becomes <b>orphaned</b>. That state is always <i>derived</i>, never stored, which is the whole point: un-marking the original restores its dependants cleanly, with no stale flags left behind.</p>
+    <div class="callout good">
+      <div class="lbl" style="color:var(--good)">A primary key is never dropped</div>
+      <p>Marking is ignored on a primary key, so you cannot produce a schema that fails to identify its own rows.</p>
+    </div>
+    <p>Toggle <b>Dropped</b> in the toolbar to show or hide them on the canvas.</p>
+  </section>
+
+  <section id="export">
+    <h2>Import and export</h2>
+    <p class="lede">Four export formats, each aimed at a different reader.</p>
+    <table class="ref">
+      <thead><tr><th>Format</th><th>For</th></tr></thead>
+      <tbody>
+        <tr><td>JSON</td><td>Round-trips losslessly, including positions and every enrichment property. The format to keep.</td></tr>
+        <tr><td>SQL DDL</td><td>Build from. Dropped and orphaned columns are emitted as comments rather than live DDL, so the script runs and the diff still shows what left.</td></tr>
+        <tr><td>Mermaid (.mmd)</td><td>Paste into a document or a pull request. Type tokens are sanitised so the parser accepts them.</td></tr>
+        <tr><td>Markdown</td><td>Review in a pull request — a table per entity with descriptions and sources.</td></tr>
+      </tbody>
+    </table>
+    <p><b>Import</b> is offered first on the start screen and first in the toolbar's Import menu. It takes a JSON file shaped <code>{ tables, relationships }</code> — including one this tool exported — or a SQL DDL file, which it parses into that shape and reports on anything it could not read. Either way it replaces the loaded schema; it does not merge.</p>
+    <p>The file is read in the browser. Nothing is uploaded, which is why a real schema is better opened this way than committed to <code>src/data/</code>.</p>
+  </section>
+
+  <section id="themes">
+    <h2>Themes</h2>
+    <p class="lede">Eight, not two.</p>
+    <p>Light: <b>Paper</b> (warm cream), <b>Frost</b> (cool white), <b>Mist</b> (neutral) and <b>Sage</b> (green). Dark: <b>Slate</b>, <b>Midnight</b>, <b>Carbon</b> and <b>Pine</b>.</p>
+    <p>Domain colours are generated, not listed. Each theme declares a lightness and a chroma; hues are handed out by position in the schema's own sorted domain list, stepping by the golden angle so that however many domains a model has, they stay as far apart on the wheel as they can. A schema from any domain therefore arrives already legible in all eight themes, with nothing to register.</p>
+  </section>
+
+  <section id="authoring">
+    <h2>Add your own schema</h2>
+    <p class="lede">To explore a schema without committing it, use <b>Import</b> — nothing leaves the browser. To bundle one into the build, three steps and no build configuration.</p>
+    <ul>
+      <li>Drop a JSON file shaped <code>{ tables, relationships }</code> into <code>src/data/</code></li>
+      <li>Import it in <code>src/data/schemas.js</code> and append an entry to <code>BUILTIN_SCHEMAS</code></li>
+      <li>Optionally add a walkthrough in <code>walkthroughs.js</code> and a rationale in <code>rationale.js</code>, both keyed by your schema id</li>
+    </ul>
+<pre><span class="c">// src/data/schemas.js</span>
+<span class="k">import</span> mySchema <span class="k">from</span> <span class="s">'./my_schema.json'</span>;
+
+<span class="k">export const</span> BUILTIN_SCHEMAS = [
+  {
+    id: <span class="s">'my_schema'</span>,
+    group: <span class="s">'starter'</span>,      <span class="c">// a SCHEMA_GROUPS id — its section on the start screen</span>
+    name: <span class="s">'Acme order domain'</span>,
+    blurb: <span class="s">'One line for the start-screen card.'</span>,
+    description: <span class="s">'The longer version, shown on hover.'</span>,
+    data: mySchema,
+  },
+  <span class="c">// ...</span>
+];</pre>
+    <p>Counts come from <code>schemaStats()</code>, so leave them out of the name.</p>
+    <div class="callout warn">
+      <div class="lbl warn">Generate, don't hand-write</div>
+      <p>A 113-field schema is not something to maintain by hand. Emit the JSON from whatever already knows your model — a catalog query, a profiling job, a migration spreadsheet — and let the walkthrough and rationale counts follow from the generated data rather than being kept in step by hand.</p>
+    </div>
+  </section>
+
+  <section id="schema">
+    <h2>The JSON shape</h2>
+    <p class="lede">Two arrays. Everything else is optional enrichment.</p>
+<pre>{
+  <span class="s">"tables"</span>: [
+    {
+      <span class="s">"id"</span>: <span class="s">"t_policy"</span>,          <span class="c">// unique, referenced by relationships</span>
+      <span class="s">"name"</span>: <span class="s">"policy"</span>,
+      <span class="s">"domain"</span>: <span class="s">"policy"</span>,         <span class="c">// any word you like — drives colour</span>
+      <span class="s">"x"</span>: 60, <span class="s">"y"</span>: 60,           <span class="c">// canvas position</span>
+      <span class="s">"dataClass"</span>: <span class="s">"master"</span>,      <span class="c">// master | reference | variant | config |</span>
+                                  <span class="c">// transactional | derived — or your own</span>
+      <span class="s">"description"</span>: <span class="s">"What it is."</span>,
+      <span class="s">"purpose"</span>: <span class="s">"What question it answers."</span>,
+      <span class="s">"sourceOfTruth"</span>: <span class="s">"..."</span>,
+      <span class="s">"writeOwner"</span>: <span class="s">"..."</span>,
+      <span class="s">"conversationPoint"</span>: <span class="s">"The open question this table raises."</span>,
+      <span class="s">"fieldGroups"</span>: [ { <span class="s">"name"</span>: <span class="s">"Identity"</span>, <span class="s">"fieldIds"</span>: [<span class="s">"f_policy_id"</span>] } ],
+      <span class="s">"fields"</span>: [ <span class="c">/* see below */</span> ]
+    }
+  ],
+  <span class="s">"relationships"</span>: [
+    {
+      <span class="s">"id"</span>: <span class="s">"r_1"</span>,
+      <span class="s">"from"</span>: { <span class="s">"table"</span>: <span class="s">"t_policy"</span>,      <span class="s">"field"</span>: <span class="s">"f_policy_policy_number"</span> },
+      <span class="s">"to"</span>:   { <span class="s">"table"</span>: <span class="s">"t_policy_term"</span>, <span class="s">"field"</span>: <span class="s">"f_policy_term_policy_number"</span> },
+      <span class="s">"type"</span>: <span class="s">"1:N"</span>,
+      <span class="s">"note"</span>: <span class="s">"one policy, one row per term of cover"</span>
+    }
+  ]
+}</pre>
+    <div class="callout warn">
+      <div class="lbl warn">Field ids must be unique across the whole schema</div>
+      <p>Relationships and foreign keys address fields by id, not by table-plus-name. The convention the bundled data uses is <code>f_&lt;table&gt;_&lt;field&gt;</code>.</p>
+    </div>
+  </section>
+
+  <section id="fields">
+    <h2>Field properties</h2>
+    <p class="lede">Only <code>name</code> and <code>type</code> are required. Everything else makes the inspector more useful.</p>
+    <table class="ref">
+      <thead><tr><th>Property</th><th>What it does</th></tr></thead>
+      <tbody>
+        <tr><td>id</td><td>Unique across the schema. Referenced by relationships, foreign keys and field groups.</td></tr>
+        <tr><td>name, type</td><td>The two required ones.</td></tr>
+        <tr><td>pk, unique, indexed, nullable</td><td>Key and constraint markers, drawn on the canvas and emitted in DDL.</td></tr>
+        <tr><td>fk</td><td><code>{ table, field }</code> — draws the relationship and feeds orphan derivation when the target is marked for deletion.</td></tr>
+        <tr><td>description</td><td>Free text. The bundled data packs type, category, census and legacy source into it.</td></tr>
+        <tr><td>example</td><td>A sample value. Leave empty for anything sensitive — the tool will not mask it for you.</td></tr>
+        <tr><td>legacyField</td><td>Where it came from in the source system, e.g. <code>PMAST&lt;43&gt; SI-TOT</code>.</td></tr>
+        <tr><td>fillPct</td><td>Share of the population that actually populates it. The single most useful number in a migration.</td></tr>
+        <tr><td>category</td><td>Business concern. Used for grouping when <code>fieldGroups</code> is absent.</td></tr>
+        <tr><td>sensitivity</td><td><code>internal</code> · <code>confidential</code> · <code>pii</code> · <code>pci</code>. Renders a warning on the field.</td></tr>
+        <tr><td>dashboardRole</td><td><code>dimension</code> · <code>measure</code> · <code>status</code> · <code>detail</code> · <code>excluded</code>.</td></tr>
+        <tr><td>storage</td><td><code>stored</code> · <code>computed</code> · <code>projected</code> · <code>migrated</code>.</td></tr>
+        <tr><td>computed</td><td>A formula string. Renders inline with an &fnof; marker — "this is not a real column".</td></tr>
+        <tr><td>warning</td><td><code>{ severity, message }</code> — <code>high</code> · <code>medium</code> · <code>low</code>.</td></tr>
+        <tr><td>issues</td><td><code>[{ kind, detail }]</code> — review findings listed in the inspector.</td></tr>
+        <tr><td>drop</td><td><code>true</code> marks it for deletion. Set by the UI; keep it on round-trip.</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section id="groups">
+    <h2>Field groups</h2>
+    <p class="lede">What Core view renders instead of a column list.</p>
+    <p>Declare <code>fieldGroups</code> on a table as an ordered array of <code>{ name, fieldIds }</code> and the canvas uses it verbatim. Any field you leave out lands in a trailing <b>Other</b> group, so nothing disappears.</p>
+    <p>Without <code>fieldGroups</code>, fields are auto-classified into business-concern buckets by name. That is a reasonable default for a schema you are exploring, and the wrong answer for one you are presenting — the model that produced the data knows what its own categories are.</p>
+    <p>A group name starting with <code>.</code> renders as a nested object — the convention the bundled policyholder model uses for embedded sections such as <code>.credit</code> and <code>.compliance</code>.</p>
+  </section>
+
+  <section id="authoring-walk">
+    <h2>Writing a walkthrough</h2>
+<pre>{
+  <span class="s">"id"</span>: <span class="s">"pair-disposition"</span>,
+  <span class="s">"name"</span>: <span class="s">"Policy vs PolicyTerm"</span>,
+  <span class="s">"description"</span>: <span class="s">"What the tour covers."</span>,
+  <span class="s">"steps"</span>: [
+    {
+      <span class="s">"id"</span>: <span class="s">"intro"</span>,
+      <span class="s">"title"</span>: <span class="s">"One legacy record, two target rows"</span>,
+      <span class="s">"body"</span>: <span class="s">"Prose. A paragraph or two — this is read aloud."</span>,
+      <span class="s">"focus"</span>: <span class="s">"all"</span>,              <span class="c">// or ["t_policy", "t_policy_term"]</span>
+      <span class="s">"touches"</span>: [<span class="s">"Policy"</span>],        <span class="c">// business flows this step involves</span>
+      <span class="s">"questions"</span>: [<span class="s">"What is still open here?"</span>]
+    }
+  ]
+}</pre>
+    <p>Register it in <code>walkthroughs.js</code> under your schema id. A schema can have several.</p>
+  </section>
+
+  <section id="authoring-rat">
+    <h2>Writing a rationale</h2>
+    <p class="lede">A list of typed sections. Six kinds.</p>
+<pre>{ <span class="s">"kind"</span>: <span class="s">"h2"</span>,      <span class="s">"text"</span>: <span class="s">"Why the split is the hard part"</span> }
+{ <span class="s">"kind"</span>: <span class="s">"p"</span>,       <span class="s">"text"</span>: <span class="s">"Prose paragraph."</span> }
+{ <span class="s">"kind"</span>: <span class="s">"bullets"</span>, <span class="s">"label"</span>: <span class="s">"Measured, not assumed"</span>, <span class="s">"items"</span>: [<span class="s">"..."</span>] }
+{ <span class="s">"kind"</span>: <span class="s">"table"</span>,   <span class="s">"head"</span>: [<span class="s">"Field"</span>, <span class="s">"Count"</span>], <span class="s">"rows"</span>: [[<span class="s">"..."</span>, <span class="s">"..."</span>]] }
+{ <span class="s">"kind"</span>: <span class="s">"callout"</span>, <span class="s">"tone"</span>: <span class="s">"warn"</span>, <span class="s">"title"</span>: <span class="s">"..."</span>, <span class="s">"text"</span>: <span class="s">"..."</span> }
+{ <span class="s">"kind"</span>: <span class="s">"spacer"</span> }</pre>
+    <p>Tones are <code>accent</code>, <code>warn</code> and <code>good</code>. Register in <code>rationale.js</code> under your schema id.</p>
+  </section>
+
+  <section id="example">
+    <h2>The bundled example</h2>
+    <p class="lede">Ardent Mutual — a fictional general-insurance carrier on a 1980s MultiValue system.</p>
+    <p>Every record count, attribute number and fill rate is invented. The shape is what matters, and so are the findings, which are the kinds of thing a real estate produces.</p>
+    <table class="ref">
+      <thead><tr><th>Schema</th><th>What it demonstrates</th></tr></thead>
+      <tbody>
+        <tr><td>policy / policy_term</td><td>113 live fields, each classified and given a recommendation. The hard question is which columns of a <code>policy*term</code>-keyed file are genuinely policy-level.</td></tr>
+        <tr><td>Minimal: quote, bind, claim</td><td>Nine tables. A claim attaches to the policy <i>term</i>, not the policy — which term was in force on the date of loss decides what cover applies.</td></tr>
+        <tr><td>Policyholder ×3</td><td>One catalog projected three ways: normalised, denormalised, minimal. Same facts, so the shapes cannot drift apart.</td></tr>
+        <tr><td>blog / ecommerce / saas</td><td>Small starter schemas for orientation.</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section id="keys">
+    <h2>Keyboard shortcuts</h2>
+    <div class="keys">
+      <div><kbd>⌘F</kbd> Search tables and fields</div>
+      <div><kbd>⌘Z</kbd> Undo</div>
+      <div><kbd>⌘⇧Z</kbd> Redo</div>
+      <div><kbd>⌘Y</kbd> Redo (alternate)</div>
+      <div><kbd>Esc</kbd> Close panel or clear search</div>
+    </div>
+    <p>On Windows and Linux, <kbd>Ctrl</kbd> substitutes for <kbd>⌘</kbd>.</p>
+  </section>
+
+  <section id="layout">
+    <h2>Project layout</h2>
+<pre>schema-studio/
+├─ index.html              <span class="c">// app entry (Vite)</span>
+├─ site/                   <span class="c">// this guide and the overview — plain HTML</span>
+└─ src/
+   ├─ App.jsx              <span class="c">// shell, toolbar, keyboard, state</span>
+   ├─ components/          <span class="c">// start · canvas · panels · walkthrough · rationale</span>
+   ├─ lib/
+   │  ├─ analyze.js        <span class="c">// schema review findings</span>
+   │  ├─ dropped.js        <span class="c">// marked + orphaned derivation</span>
+   │  ├─ groups.js         <span class="c">// field grouping, explicit then auto</span>
+   │  ├─ io.js             <span class="c">// JSON · SQL DDL · Mermaid · Markdown</span>
+   │  ├─ layout.js         <span class="c">// zones, overlap resolution, auto-arrange</span>
+   │  └─ palette.js        <span class="c">// derived domain colours and labels</span>
+   └─ data/                <span class="c">// schemas + registries</span></pre>
+  </section>
+
+  </div>
+  </main>
+</div>
+
+<script>
+(function(){
+  'use strict';
+  var KEY='ss-site-theme', root=document.documentElement;
+  function stored(){try{return localStorage.getItem(KEY);}catch(e){return null;}}
+  function resolved(){
+    var t=root.getAttribute('data-theme');
+    if(t==='light'||t==='dark') return t;
+    return window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
+  }
+  function apply(t,persist){
+    root.setAttribute('data-theme',t);
+    if(persist){try{localStorage.setItem(KEY,t);}catch(e){}}
+    var b=document.getElementById('themeToggle');
+    if(b) b.setAttribute('aria-label',t==='dark'?'Switch to light theme':'Switch to dark theme');
+  }
+  var btn=document.getElementById('themeToggle');
+  if(btn) btn.addEventListener('click',function(){apply(resolved()==='dark'?'light':'dark',true);});
+  if(stored()) apply(stored(),false);
+
+  
+  var btn=document.getElementById('themeToggle');
+  if(btn) btn.addEventListener('click',function(){apply(resolved()==='dark'?'light':'dark',true);});
+  if(stored()) apply(stored(),false);
+
+  /* highlight the section currently in view */
+  var links=[].slice.call(document.querySelectorAll('.docs-nav a[href^="#"]'));
+  var secs=links.map(function(a){return document.querySelector(a.getAttribute('href'));}).filter(Boolean);
+  if(!secs.length||!('IntersectionObserver' in window)) return;
+  var io=new IntersectionObserver(function(en){
+    en.forEach(function(e){
+      if(!e.isIntersecting) return;
+      links.forEach(function(a){
+        a.classList.toggle('active', a.getAttribute('href')==='#'+e.target.id);
+      });
+    });
+  },{rootMargin:'-72px 0px -70% 0px',threshold:0});
+  secs.forEach(function(s){io.observe(s);});
+})();
+</script>
+</body>
+</html>

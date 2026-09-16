@@ -1,0 +1,521 @@
+{
+  "tables": [
+    {
+      "id": "t_user",
+      "name": "user",
+      "domain": "customer",
+      "x": 80,
+      "y": 80,
+      "dataClass": "master",
+      "description": "Registered blog users — authors and commenters.",
+      "purpose": "Registered blog users — authors and commenters.",
+      "owningDomain": "customer",
+      "consumingDomains": [],
+      "sourceOfTruth": "",
+      "syncDirection": "",
+      "writeOwner": "",
+      "readConsumers": [],
+      "changeFrequency": "",
+      "sensitivity": "",
+      "fields": [
+        {
+          "id": "f_user_user_id",
+          "name": "user_id",
+          "type": "string",
+          "pk": true,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "Opaque user identifier.",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_user_email",
+          "name": "email",
+          "type": "string",
+          "pk": false,
+          "fk": null,
+          "unique": true,
+          "indexed": true,
+          "nullable": false,
+          "description": "Login email, unique across the system.",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_user_display_name",
+          "name": "display_name",
+          "type": "string",
+          "pk": false,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_user_role",
+          "name": "role",
+          "type": "string",
+          "pk": false,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "author | editor | commenter",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_user_created_at",
+          "name": "created_at",
+          "type": "date",
+          "pk": false,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        }
+      ],
+      "owns": [],
+      "doesNotOwn": [],
+      "conversationPoint": ""
+    },
+    {
+      "id": "t_post",
+      "name": "post",
+      "domain": "product",
+      "x": 440,
+      "y": 80,
+      "dataClass": "transactional",
+      "description": "A blog post authored by a user.",
+      "purpose": "A blog post authored by a user.",
+      "owningDomain": "product",
+      "consumingDomains": [],
+      "sourceOfTruth": "",
+      "syncDirection": "",
+      "writeOwner": "",
+      "readConsumers": [],
+      "changeFrequency": "",
+      "sensitivity": "",
+      "fields": [
+        {
+          "id": "f_post_post_id",
+          "name": "post_id",
+          "type": "string",
+          "pk": true,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_post_author_id",
+          "name": "author_id",
+          "type": "string",
+          "pk": false,
+          "fk": {
+            "table": "t_user",
+            "field": "f_user_user_id"
+          },
+          "unique": false,
+          "indexed": true,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_post_title",
+          "name": "title",
+          "type": "string",
+          "pk": false,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_post_slug",
+          "name": "slug",
+          "type": "string",
+          "pk": false,
+          "fk": null,
+          "unique": true,
+          "indexed": true,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_post_body",
+          "name": "body",
+          "type": "string",
+          "pk": false,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_post_status",
+          "name": "status",
+          "type": "string",
+          "pk": false,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "draft | published | archived",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_post_published_at",
+          "name": "published_at",
+          "type": "date",
+          "pk": false,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": true,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_post_created_at",
+          "name": "created_at",
+          "type": "date",
+          "pk": false,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_post_updated_at",
+          "name": "updated_at",
+          "type": "date",
+          "pk": false,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        }
+      ],
+      "owns": [],
+      "doesNotOwn": [],
+      "conversationPoint": ""
+    },
+    {
+      "id": "t_tag",
+      "name": "tag",
+      "domain": "product",
+      "x": 800,
+      "y": 80,
+      "dataClass": "reference",
+      "description": "A categorical label attached to posts.",
+      "purpose": "A categorical label attached to posts.",
+      "owningDomain": "product",
+      "consumingDomains": [],
+      "sourceOfTruth": "",
+      "syncDirection": "",
+      "writeOwner": "",
+      "readConsumers": [],
+      "changeFrequency": "",
+      "sensitivity": "",
+      "fields": [
+        {
+          "id": "f_tag_tag_id",
+          "name": "tag_id",
+          "type": "string",
+          "pk": true,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_tag_name",
+          "name": "name",
+          "type": "string",
+          "pk": false,
+          "fk": null,
+          "unique": true,
+          "indexed": false,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_tag_slug",
+          "name": "slug",
+          "type": "string",
+          "pk": false,
+          "fk": null,
+          "unique": true,
+          "indexed": true,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        }
+      ],
+      "owns": [],
+      "doesNotOwn": [],
+      "conversationPoint": ""
+    },
+    {
+      "id": "t_post_tag",
+      "name": "post_tag",
+      "domain": "product",
+      "x": 620,
+      "y": 380,
+      "dataClass": "reference",
+      "description": "Many-to-many join between posts and tags.",
+      "purpose": "Many-to-many join between posts and tags.",
+      "owningDomain": "product",
+      "consumingDomains": [],
+      "sourceOfTruth": "",
+      "syncDirection": "",
+      "writeOwner": "",
+      "readConsumers": [],
+      "changeFrequency": "",
+      "sensitivity": "",
+      "fields": [
+        {
+          "id": "f_post_tag_post_id",
+          "name": "post_id",
+          "type": "string",
+          "pk": true,
+          "fk": {
+            "table": "t_post",
+            "field": "f_post_post_id"
+          },
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_post_tag_tag_id",
+          "name": "tag_id",
+          "type": "string",
+          "pk": true,
+          "fk": {
+            "table": "t_tag",
+            "field": "f_tag_tag_id"
+          },
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        }
+      ],
+      "owns": [],
+      "doesNotOwn": [],
+      "conversationPoint": ""
+    },
+    {
+      "id": "t_comment",
+      "name": "comment",
+      "domain": "customer",
+      "x": 80,
+      "y": 380,
+      "dataClass": "transactional",
+      "description": "A reader comment on a post.",
+      "purpose": "A reader comment on a post.",
+      "owningDomain": "customer",
+      "consumingDomains": [],
+      "sourceOfTruth": "",
+      "syncDirection": "",
+      "writeOwner": "",
+      "readConsumers": [],
+      "changeFrequency": "",
+      "sensitivity": "",
+      "fields": [
+        {
+          "id": "f_comment_comment_id",
+          "name": "comment_id",
+          "type": "string",
+          "pk": true,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_comment_post_id",
+          "name": "post_id",
+          "type": "string",
+          "pk": false,
+          "fk": {
+            "table": "t_post",
+            "field": "f_post_post_id"
+          },
+          "unique": false,
+          "indexed": true,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_comment_author_id",
+          "name": "author_id",
+          "type": "string",
+          "pk": false,
+          "fk": {
+            "table": "t_user",
+            "field": "f_user_user_id"
+          },
+          "unique": false,
+          "indexed": true,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_comment_body",
+          "name": "body",
+          "type": "string",
+          "pk": false,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_comment_status",
+          "name": "status",
+          "type": "string",
+          "pk": false,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "pending | approved | spam | hidden",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_comment_created_at",
+          "name": "created_at",
+          "type": "date",
+          "pk": false,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        }
+      ],
+      "owns": [],
+      "doesNotOwn": [],
+      "conversationPoint": ""
+    }
+  ],
+  "relationships": [
+    {
+      "id": "r_1",
+      "from": {
+        "table": "t_post",
+        "field": "f_post_author_id"
+      },
+      "to": {
+        "table": "t_user",
+        "field": "f_user_user_id"
+      },
+      "type": "N:1"
+    },
+    {
+      "id": "r_2",
+      "from": {
+        "table": "t_post_tag",
+        "field": "f_post_tag_post_id"
+      },
+      "to": {
+        "table": "t_post",
+        "field": "f_post_post_id"
+      },
+      "type": "N:1"
+    },
+    {
+      "id": "r_3",
+      "from": {
+        "table": "t_post_tag",
+        "field": "f_post_tag_tag_id"
+      },
+      "to": {
+        "table": "t_tag",
+        "field": "f_tag_tag_id"
+      },
+      "type": "N:1"
+    },
+    {
+      "id": "r_4",
+      "from": {
+        "table": "t_comment",
+        "field": "f_comment_post_id"
+      },
+      "to": {
+        "table": "t_post",
+        "field": "f_post_post_id"
+      },
+      "type": "N:1"
+    },
+    {
+      "id": "r_5",
+      "from": {
+        "table": "t_comment",
+        "field": "f_comment_author_id"
+      },
+      "to": {
+        "table": "t_user",
+        "field": "f_user_user_id"
+      },
+      "type": "N:1"
+    }
+  ]
+}

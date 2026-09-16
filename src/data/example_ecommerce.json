@@ -1,0 +1,1731 @@
+{
+  "tables": [
+    {
+      "id": "t_customer",
+      "name": "customer",
+      "domain": "customer",
+      "x": 80,
+      "y": 80,
+      "dataClass": "master",
+      "description": "A registered customer.",
+      "purpose": "A registered customer.",
+      "owningDomain": "customer",
+      "consumingDomains": [],
+      "sourceOfTruth": "",
+      "syncDirection": "",
+      "writeOwner": "",
+      "readConsumers": [],
+      "changeFrequency": "",
+      "sensitivity": "",
+      "fields": [
+        {
+          "id": "f_customer_customer_id",
+          "name": "customer_id",
+          "type": "string",
+          "pk": true,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_customer_email",
+          "name": "email",
+          "type": "string",
+          "pk": false,
+          "fk": null,
+          "unique": true,
+          "indexed": true,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_customer_name",
+          "name": "name",
+          "type": "string",
+          "pk": false,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_customer_phone",
+          "name": "phone",
+          "type": "string",
+          "pk": false,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": true,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_customer_created_at",
+          "name": "created_at",
+          "type": "date",
+          "pk": false,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        }
+      ],
+      "owns": [],
+      "doesNotOwn": [],
+      "conversationPoint": ""
+    },
+    {
+      "id": "t_address",
+      "name": "address",
+      "domain": "customer",
+      "x": 80,
+      "y": 380,
+      "dataClass": "reference",
+      "description": "A postal address belonging to a customer. Multiple per customer; typed as billing or shipping.",
+      "purpose": "A postal address belonging to a customer. Multiple per customer; typed as billing or shipping.",
+      "owningDomain": "customer",
+      "consumingDomains": [],
+      "sourceOfTruth": "",
+      "syncDirection": "",
+      "writeOwner": "",
+      "readConsumers": [],
+      "changeFrequency": "",
+      "sensitivity": "",
+      "fields": [
+        {
+          "id": "f_address_address_id",
+          "name": "address_id",
+          "type": "string",
+          "pk": true,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_address_customer_id",
+          "name": "customer_id",
+          "type": "string",
+          "pk": false,
+          "fk": {
+            "table": "t_customer",
+            "field": "f_customer_customer_id"
+          },
+          "unique": false,
+          "indexed": true,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_address_type",
+          "name": "type",
+          "type": "string",
+          "pk": false,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "billing | shipping",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_address_line1",
+          "name": "line1",
+          "type": "string",
+          "pk": false,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_address_line2",
+          "name": "line2",
+          "type": "string",
+          "pk": false,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": true,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_address_city",
+          "name": "city",
+          "type": "string",
+          "pk": false,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_address_state",
+          "name": "state",
+          "type": "string",
+          "pk": false,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_address_postal_code",
+          "name": "postal_code",
+          "type": "string",
+          "pk": false,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_address_country",
+          "name": "country",
+          "type": "string",
+          "pk": false,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        }
+      ],
+      "owns": [],
+      "doesNotOwn": [],
+      "conversationPoint": ""
+    },
+    {
+      "id": "t_product",
+      "name": "product",
+      "domain": "product",
+      "x": 460,
+      "y": 80,
+      "dataClass": "master",
+      "description": "A sellable product.",
+      "purpose": "A sellable product.",
+      "owningDomain": "product",
+      "consumingDomains": [],
+      "sourceOfTruth": "",
+      "syncDirection": "",
+      "writeOwner": "",
+      "readConsumers": [],
+      "changeFrequency": "",
+      "sensitivity": "",
+      "fields": [
+        {
+          "id": "f_product_product_id",
+          "name": "product_id",
+          "type": "string",
+          "pk": true,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_product_sku",
+          "name": "sku",
+          "type": "string",
+          "pk": false,
+          "fk": null,
+          "unique": true,
+          "indexed": true,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_product_name",
+          "name": "name",
+          "type": "string",
+          "pk": false,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_product_description",
+          "name": "description",
+          "type": "string",
+          "pk": false,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": true,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_product_price",
+          "name": "price",
+          "type": "number",
+          "pk": false,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "4-decimal precision.",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_product_currency",
+          "name": "currency",
+          "type": "string",
+          "pk": false,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_product_status",
+          "name": "status",
+          "type": "string",
+          "pk": false,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "active | discontinued | draft",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_product_created_at",
+          "name": "created_at",
+          "type": "date",
+          "pk": false,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        }
+      ],
+      "owns": [],
+      "doesNotOwn": [],
+      "conversationPoint": ""
+    },
+    {
+      "id": "t_category",
+      "name": "category",
+      "domain": "product",
+      "x": 840,
+      "y": 80,
+      "dataClass": "reference",
+      "description": "A product taxonomy node. Self-referential to model the hierarchy.",
+      "purpose": "A product taxonomy node. Self-referential to model the hierarchy.",
+      "owningDomain": "product",
+      "consumingDomains": [],
+      "sourceOfTruth": "",
+      "syncDirection": "",
+      "writeOwner": "",
+      "readConsumers": [],
+      "changeFrequency": "",
+      "sensitivity": "",
+      "fields": [
+        {
+          "id": "f_category_category_id",
+          "name": "category_id",
+          "type": "string",
+          "pk": true,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_category_parent_category_id",
+          "name": "parent_category_id",
+          "type": "string",
+          "pk": false,
+          "fk": {
+            "table": "t_category",
+            "field": "f_category_category_id"
+          },
+          "unique": false,
+          "indexed": false,
+          "nullable": true,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_category_name",
+          "name": "name",
+          "type": "string",
+          "pk": false,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_category_slug",
+          "name": "slug",
+          "type": "string",
+          "pk": false,
+          "fk": null,
+          "unique": true,
+          "indexed": true,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        }
+      ],
+      "owns": [],
+      "doesNotOwn": [],
+      "conversationPoint": ""
+    },
+    {
+      "id": "t_product_category",
+      "name": "product_category",
+      "domain": "product",
+      "x": 840,
+      "y": 380,
+      "dataClass": "reference",
+      "description": "Many-to-many join between products and categories.",
+      "purpose": "Many-to-many join between products and categories.",
+      "owningDomain": "product",
+      "consumingDomains": [],
+      "sourceOfTruth": "",
+      "syncDirection": "",
+      "writeOwner": "",
+      "readConsumers": [],
+      "changeFrequency": "",
+      "sensitivity": "",
+      "fields": [
+        {
+          "id": "f_product_category_product_id",
+          "name": "product_id",
+          "type": "string",
+          "pk": true,
+          "fk": {
+            "table": "t_product",
+            "field": "f_product_product_id"
+          },
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_product_category_category_id",
+          "name": "category_id",
+          "type": "string",
+          "pk": true,
+          "fk": {
+            "table": "t_category",
+            "field": "f_category_category_id"
+          },
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        }
+      ],
+      "owns": [],
+      "doesNotOwn": [],
+      "conversationPoint": ""
+    },
+    {
+      "id": "t_warehouse",
+      "name": "warehouse",
+      "domain": "branch",
+      "x": 1220,
+      "y": 380,
+      "dataClass": "master",
+      "description": "A physical fulfillment location.",
+      "purpose": "A physical fulfillment location.",
+      "owningDomain": "branch",
+      "consumingDomains": [],
+      "sourceOfTruth": "",
+      "syncDirection": "",
+      "writeOwner": "",
+      "readConsumers": [],
+      "changeFrequency": "",
+      "sensitivity": "",
+      "fields": [
+        {
+          "id": "f_warehouse_warehouse_id",
+          "name": "warehouse_id",
+          "type": "string",
+          "pk": true,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_warehouse_code",
+          "name": "code",
+          "type": "string",
+          "pk": false,
+          "fk": null,
+          "unique": true,
+          "indexed": false,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_warehouse_name",
+          "name": "name",
+          "type": "string",
+          "pk": false,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_warehouse_city",
+          "name": "city",
+          "type": "string",
+          "pk": false,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": true,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_warehouse_country",
+          "name": "country",
+          "type": "string",
+          "pk": false,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": true,
+          "description": "",
+          "example": "",
+          "warning": null
+        }
+      ],
+      "owns": [],
+      "doesNotOwn": [],
+      "conversationPoint": ""
+    },
+    {
+      "id": "t_inventory",
+      "name": "inventory",
+      "domain": "inventory",
+      "x": 1220,
+      "y": 80,
+      "dataClass": "transactional",
+      "description": "On-hand stock per (product, warehouse).",
+      "purpose": "On-hand stock per (product, warehouse).",
+      "owningDomain": "inventory",
+      "consumingDomains": [],
+      "sourceOfTruth": "",
+      "syncDirection": "",
+      "writeOwner": "",
+      "readConsumers": [],
+      "changeFrequency": "",
+      "sensitivity": "",
+      "fields": [
+        {
+          "id": "f_inventory_inventory_id",
+          "name": "inventory_id",
+          "type": "string",
+          "pk": true,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_inventory_product_id",
+          "name": "product_id",
+          "type": "string",
+          "pk": false,
+          "fk": {
+            "table": "t_product",
+            "field": "f_product_product_id"
+          },
+          "unique": false,
+          "indexed": true,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_inventory_warehouse_id",
+          "name": "warehouse_id",
+          "type": "string",
+          "pk": false,
+          "fk": {
+            "table": "t_warehouse",
+            "field": "f_warehouse_warehouse_id"
+          },
+          "unique": false,
+          "indexed": true,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_inventory_qty_on_hand",
+          "name": "qty_on_hand",
+          "type": "integer",
+          "pk": false,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_inventory_qty_reserved",
+          "name": "qty_reserved",
+          "type": "integer",
+          "pk": false,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_inventory_updated_at",
+          "name": "updated_at",
+          "type": "date",
+          "pk": false,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        }
+      ],
+      "owns": [],
+      "doesNotOwn": [],
+      "conversationPoint": ""
+    },
+    {
+      "id": "t_order",
+      "name": "order",
+      "domain": "orders",
+      "x": 460,
+      "y": 380,
+      "dataClass": "transactional",
+      "description": "A customer order header.",
+      "purpose": "A customer order header.",
+      "owningDomain": "orders",
+      "consumingDomains": [],
+      "sourceOfTruth": "",
+      "syncDirection": "",
+      "writeOwner": "",
+      "readConsumers": [],
+      "changeFrequency": "",
+      "sensitivity": "",
+      "fields": [
+        {
+          "id": "f_order_order_id",
+          "name": "order_id",
+          "type": "string",
+          "pk": true,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_order_customer_id",
+          "name": "customer_id",
+          "type": "string",
+          "pk": false,
+          "fk": {
+            "table": "t_customer",
+            "field": "f_customer_customer_id"
+          },
+          "unique": false,
+          "indexed": true,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_order_shipping_address_id",
+          "name": "shipping_address_id",
+          "type": "string",
+          "pk": false,
+          "fk": {
+            "table": "t_address",
+            "field": "f_address_address_id"
+          },
+          "unique": false,
+          "indexed": false,
+          "nullable": true,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_order_billing_address_id",
+          "name": "billing_address_id",
+          "type": "string",
+          "pk": false,
+          "fk": {
+            "table": "t_address",
+            "field": "f_address_address_id"
+          },
+          "unique": false,
+          "indexed": false,
+          "nullable": true,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_order_status",
+          "name": "status",
+          "type": "string",
+          "pk": false,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "pending | paid | shipped | delivered | cancelled",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_order_subtotal",
+          "name": "subtotal",
+          "type": "number",
+          "pk": false,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_order_tax",
+          "name": "tax",
+          "type": "number",
+          "pk": false,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_order_total",
+          "name": "total",
+          "type": "number",
+          "pk": false,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_order_currency",
+          "name": "currency",
+          "type": "string",
+          "pk": false,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_order_ordered_at",
+          "name": "ordered_at",
+          "type": "date",
+          "pk": false,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        }
+      ],
+      "owns": [],
+      "doesNotOwn": [],
+      "conversationPoint": ""
+    },
+    {
+      "id": "t_order_item",
+      "name": "order_item",
+      "domain": "orders",
+      "x": 460,
+      "y": 700,
+      "dataClass": "transactional",
+      "description": "A single line on an order. Each line locks the unit price at order time so historical totals stay correct after price changes.",
+      "purpose": "A single line on an order. Each line locks the unit price at order time so historical totals stay correct after price changes.",
+      "owningDomain": "orders",
+      "consumingDomains": [],
+      "sourceOfTruth": "",
+      "syncDirection": "",
+      "writeOwner": "",
+      "readConsumers": [],
+      "changeFrequency": "",
+      "sensitivity": "",
+      "fields": [
+        {
+          "id": "f_order_item_order_item_id",
+          "name": "order_item_id",
+          "type": "string",
+          "pk": true,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_order_item_order_id",
+          "name": "order_id",
+          "type": "string",
+          "pk": false,
+          "fk": {
+            "table": "t_order",
+            "field": "f_order_order_id"
+          },
+          "unique": false,
+          "indexed": true,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_order_item_product_id",
+          "name": "product_id",
+          "type": "string",
+          "pk": false,
+          "fk": {
+            "table": "t_product",
+            "field": "f_product_product_id"
+          },
+          "unique": false,
+          "indexed": true,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_order_item_qty",
+          "name": "qty",
+          "type": "integer",
+          "pk": false,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_order_item_unit_price",
+          "name": "unit_price",
+          "type": "number",
+          "pk": false,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "Snapshot of product price at the time of order.",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_order_item_line_total",
+          "name": "line_total",
+          "type": "number",
+          "pk": false,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        }
+      ],
+      "owns": [],
+      "doesNotOwn": [],
+      "conversationPoint": ""
+    },
+    {
+      "id": "t_payment",
+      "name": "payment",
+      "domain": "finance",
+      "x": 80,
+      "y": 700,
+      "dataClass": "transactional",
+      "description": "A payment attempt against an order. One order can have multiple payment rows (retries, partial captures).",
+      "purpose": "A payment attempt against an order. One order can have multiple payment rows (retries, partial captures).",
+      "owningDomain": "finance",
+      "consumingDomains": [],
+      "sourceOfTruth": "",
+      "syncDirection": "",
+      "writeOwner": "",
+      "readConsumers": [],
+      "changeFrequency": "",
+      "sensitivity": "",
+      "fields": [
+        {
+          "id": "f_payment_payment_id",
+          "name": "payment_id",
+          "type": "string",
+          "pk": true,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_payment_order_id",
+          "name": "order_id",
+          "type": "string",
+          "pk": false,
+          "fk": {
+            "table": "t_order",
+            "field": "f_order_order_id"
+          },
+          "unique": false,
+          "indexed": true,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_payment_method",
+          "name": "method",
+          "type": "string",
+          "pk": false,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "card | bank_transfer | wallet | store_credit",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_payment_amount",
+          "name": "amount",
+          "type": "number",
+          "pk": false,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_payment_status",
+          "name": "status",
+          "type": "string",
+          "pk": false,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "pending | succeeded | failed | refunded",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_payment_provider_ref",
+          "name": "provider_ref",
+          "type": "string",
+          "pk": false,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": true,
+          "description": "External payment processor reference.",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_payment_paid_at",
+          "name": "paid_at",
+          "type": "date",
+          "pk": false,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": true,
+          "description": "",
+          "example": "",
+          "warning": null
+        }
+      ],
+      "owns": [],
+      "doesNotOwn": [],
+      "conversationPoint": ""
+    },
+    {
+      "id": "t_shipment",
+      "name": "shipment",
+      "domain": "fulfillment",
+      "x": 840,
+      "y": 700,
+      "dataClass": "transactional",
+      "description": "An outbound shipment of one or more order items.",
+      "purpose": "An outbound shipment of one or more order items.",
+      "owningDomain": "fulfillment",
+      "consumingDomains": [],
+      "sourceOfTruth": "",
+      "syncDirection": "",
+      "writeOwner": "",
+      "readConsumers": [],
+      "changeFrequency": "",
+      "sensitivity": "",
+      "fields": [
+        {
+          "id": "f_shipment_shipment_id",
+          "name": "shipment_id",
+          "type": "string",
+          "pk": true,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_shipment_order_id",
+          "name": "order_id",
+          "type": "string",
+          "pk": false,
+          "fk": {
+            "table": "t_order",
+            "field": "f_order_order_id"
+          },
+          "unique": false,
+          "indexed": true,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_shipment_warehouse_id",
+          "name": "warehouse_id",
+          "type": "string",
+          "pk": false,
+          "fk": {
+            "table": "t_warehouse",
+            "field": "f_warehouse_warehouse_id"
+          },
+          "unique": false,
+          "indexed": false,
+          "nullable": true,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_shipment_carrier",
+          "name": "carrier",
+          "type": "string",
+          "pk": false,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": true,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_shipment_tracking_number",
+          "name": "tracking_number",
+          "type": "string",
+          "pk": false,
+          "fk": null,
+          "unique": false,
+          "indexed": true,
+          "nullable": true,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_shipment_status",
+          "name": "status",
+          "type": "string",
+          "pk": false,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "preparing | in_transit | delivered | returned",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_shipment_shipped_at",
+          "name": "shipped_at",
+          "type": "date",
+          "pk": false,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": true,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_shipment_delivered_at",
+          "name": "delivered_at",
+          "type": "date",
+          "pk": false,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": true,
+          "description": "",
+          "example": "",
+          "warning": null
+        }
+      ],
+      "owns": [],
+      "doesNotOwn": [],
+      "conversationPoint": ""
+    },
+    {
+      "id": "t_cart",
+      "name": "cart",
+      "domain": "customer",
+      "x": 80,
+      "y": 1020,
+      "dataClass": "transactional",
+      "description": "An open shopping cart for a customer.",
+      "purpose": "An open shopping cart for a customer.",
+      "owningDomain": "customer",
+      "consumingDomains": [],
+      "sourceOfTruth": "",
+      "syncDirection": "",
+      "writeOwner": "",
+      "readConsumers": [],
+      "changeFrequency": "",
+      "sensitivity": "",
+      "fields": [
+        {
+          "id": "f_cart_cart_id",
+          "name": "cart_id",
+          "type": "string",
+          "pk": true,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_cart_customer_id",
+          "name": "customer_id",
+          "type": "string",
+          "pk": false,
+          "fk": {
+            "table": "t_customer",
+            "field": "f_customer_customer_id"
+          },
+          "unique": false,
+          "indexed": true,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_cart_created_at",
+          "name": "created_at",
+          "type": "date",
+          "pk": false,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_cart_updated_at",
+          "name": "updated_at",
+          "type": "date",
+          "pk": false,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        }
+      ],
+      "owns": [],
+      "doesNotOwn": [],
+      "conversationPoint": ""
+    },
+    {
+      "id": "t_cart_item",
+      "name": "cart_item",
+      "domain": "customer",
+      "x": 460,
+      "y": 1020,
+      "dataClass": "transactional",
+      "description": "A single product line inside a cart.",
+      "purpose": "A single product line inside a cart.",
+      "owningDomain": "customer",
+      "consumingDomains": [],
+      "sourceOfTruth": "",
+      "syncDirection": "",
+      "writeOwner": "",
+      "readConsumers": [],
+      "changeFrequency": "",
+      "sensitivity": "",
+      "fields": [
+        {
+          "id": "f_cart_item_cart_item_id",
+          "name": "cart_item_id",
+          "type": "string",
+          "pk": true,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_cart_item_cart_id",
+          "name": "cart_id",
+          "type": "string",
+          "pk": false,
+          "fk": {
+            "table": "t_cart",
+            "field": "f_cart_cart_id"
+          },
+          "unique": false,
+          "indexed": true,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_cart_item_product_id",
+          "name": "product_id",
+          "type": "string",
+          "pk": false,
+          "fk": {
+            "table": "t_product",
+            "field": "f_product_product_id"
+          },
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_cart_item_qty",
+          "name": "qty",
+          "type": "integer",
+          "pk": false,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_cart_item_added_at",
+          "name": "added_at",
+          "type": "date",
+          "pk": false,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        }
+      ],
+      "owns": [],
+      "doesNotOwn": [],
+      "conversationPoint": ""
+    },
+    {
+      "id": "t_review",
+      "name": "review",
+      "domain": "product",
+      "x": 840,
+      "y": 1020,
+      "dataClass": "transactional",
+      "description": "A product review left by a customer.",
+      "purpose": "A product review left by a customer.",
+      "owningDomain": "product",
+      "consumingDomains": [],
+      "sourceOfTruth": "",
+      "syncDirection": "",
+      "writeOwner": "",
+      "readConsumers": [],
+      "changeFrequency": "",
+      "sensitivity": "",
+      "fields": [
+        {
+          "id": "f_review_review_id",
+          "name": "review_id",
+          "type": "string",
+          "pk": true,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_review_product_id",
+          "name": "product_id",
+          "type": "string",
+          "pk": false,
+          "fk": {
+            "table": "t_product",
+            "field": "f_product_product_id"
+          },
+          "unique": false,
+          "indexed": true,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_review_customer_id",
+          "name": "customer_id",
+          "type": "string",
+          "pk": false,
+          "fk": {
+            "table": "t_customer",
+            "field": "f_customer_customer_id"
+          },
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_review_rating",
+          "name": "rating",
+          "type": "integer",
+          "pk": false,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "1 to 5.",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_review_title",
+          "name": "title",
+          "type": "string",
+          "pk": false,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": true,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_review_body",
+          "name": "body",
+          "type": "string",
+          "pk": false,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": true,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_review_created_at",
+          "name": "created_at",
+          "type": "date",
+          "pk": false,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        }
+      ],
+      "owns": [],
+      "doesNotOwn": [],
+      "conversationPoint": ""
+    }
+  ],
+  "relationships": [
+    {
+      "id": "r_1",
+      "from": {
+        "table": "t_address",
+        "field": "f_address_customer_id"
+      },
+      "to": {
+        "table": "t_customer",
+        "field": "f_customer_customer_id"
+      },
+      "type": "N:1"
+    },
+    {
+      "id": "r_2",
+      "from": {
+        "table": "t_category",
+        "field": "f_category_parent_category_id"
+      },
+      "to": {
+        "table": "t_category",
+        "field": "f_category_category_id"
+      },
+      "type": "N:1"
+    },
+    {
+      "id": "r_3",
+      "from": {
+        "table": "t_product_category",
+        "field": "f_product_category_product_id"
+      },
+      "to": {
+        "table": "t_product",
+        "field": "f_product_product_id"
+      },
+      "type": "N:1"
+    },
+    {
+      "id": "r_4",
+      "from": {
+        "table": "t_product_category",
+        "field": "f_product_category_category_id"
+      },
+      "to": {
+        "table": "t_category",
+        "field": "f_category_category_id"
+      },
+      "type": "N:1"
+    },
+    {
+      "id": "r_5",
+      "from": {
+        "table": "t_inventory",
+        "field": "f_inventory_product_id"
+      },
+      "to": {
+        "table": "t_product",
+        "field": "f_product_product_id"
+      },
+      "type": "N:1"
+    },
+    {
+      "id": "r_6",
+      "from": {
+        "table": "t_inventory",
+        "field": "f_inventory_warehouse_id"
+      },
+      "to": {
+        "table": "t_warehouse",
+        "field": "f_warehouse_warehouse_id"
+      },
+      "type": "N:1"
+    },
+    {
+      "id": "r_7",
+      "from": {
+        "table": "t_order",
+        "field": "f_order_customer_id"
+      },
+      "to": {
+        "table": "t_customer",
+        "field": "f_customer_customer_id"
+      },
+      "type": "N:1"
+    },
+    {
+      "id": "r_8",
+      "from": {
+        "table": "t_order",
+        "field": "f_order_shipping_address_id"
+      },
+      "to": {
+        "table": "t_address",
+        "field": "f_address_address_id"
+      },
+      "type": "N:1"
+    },
+    {
+      "id": "r_9",
+      "from": {
+        "table": "t_order",
+        "field": "f_order_billing_address_id"
+      },
+      "to": {
+        "table": "t_address",
+        "field": "f_address_address_id"
+      },
+      "type": "N:1"
+    },
+    {
+      "id": "r_10",
+      "from": {
+        "table": "t_order_item",
+        "field": "f_order_item_order_id"
+      },
+      "to": {
+        "table": "t_order",
+        "field": "f_order_order_id"
+      },
+      "type": "N:1"
+    },
+    {
+      "id": "r_11",
+      "from": {
+        "table": "t_order_item",
+        "field": "f_order_item_product_id"
+      },
+      "to": {
+        "table": "t_product",
+        "field": "f_product_product_id"
+      },
+      "type": "N:1"
+    },
+    {
+      "id": "r_12",
+      "from": {
+        "table": "t_payment",
+        "field": "f_payment_order_id"
+      },
+      "to": {
+        "table": "t_order",
+        "field": "f_order_order_id"
+      },
+      "type": "N:1"
+    },
+    {
+      "id": "r_13",
+      "from": {
+        "table": "t_shipment",
+        "field": "f_shipment_order_id"
+      },
+      "to": {
+        "table": "t_order",
+        "field": "f_order_order_id"
+      },
+      "type": "N:1"
+    },
+    {
+      "id": "r_14",
+      "from": {
+        "table": "t_shipment",
+        "field": "f_shipment_warehouse_id"
+      },
+      "to": {
+        "table": "t_warehouse",
+        "field": "f_warehouse_warehouse_id"
+      },
+      "type": "N:1"
+    },
+    {
+      "id": "r_15",
+      "from": {
+        "table": "t_cart",
+        "field": "f_cart_customer_id"
+      },
+      "to": {
+        "table": "t_customer",
+        "field": "f_customer_customer_id"
+      },
+      "type": "N:1"
+    },
+    {
+      "id": "r_16",
+      "from": {
+        "table": "t_cart_item",
+        "field": "f_cart_item_cart_id"
+      },
+      "to": {
+        "table": "t_cart",
+        "field": "f_cart_cart_id"
+      },
+      "type": "N:1"
+    },
+    {
+      "id": "r_17",
+      "from": {
+        "table": "t_cart_item",
+        "field": "f_cart_item_product_id"
+      },
+      "to": {
+        "table": "t_product",
+        "field": "f_product_product_id"
+      },
+      "type": "N:1"
+    },
+    {
+      "id": "r_18",
+      "from": {
+        "table": "t_review",
+        "field": "f_review_product_id"
+      },
+      "to": {
+        "table": "t_product",
+        "field": "f_product_product_id"
+      },
+      "type": "N:1"
+    },
+    {
+      "id": "r_19",
+      "from": {
+        "table": "t_review",
+        "field": "f_review_customer_id"
+      },
+      "to": {
+        "table": "t_customer",
+        "field": "f_customer_customer_id"
+      },
+      "type": "N:1"
+    }
+  ]
+}

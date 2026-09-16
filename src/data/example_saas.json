@@ -1,0 +1,1325 @@
+{
+  "tables": [
+    {
+      "id": "t_workspace",
+      "name": "workspace",
+      "domain": "customer",
+      "x": 460,
+      "y": 80,
+      "dataClass": "master",
+      "description": "A tenant of the system. Every other entity scopes to a workspace.",
+      "purpose": "A tenant of the system. Every other entity scopes to a workspace.",
+      "owningDomain": "customer",
+      "consumingDomains": [],
+      "sourceOfTruth": "",
+      "syncDirection": "",
+      "writeOwner": "",
+      "readConsumers": [],
+      "changeFrequency": "",
+      "sensitivity": "",
+      "fields": [
+        {
+          "id": "f_workspace_workspace_id",
+          "name": "workspace_id",
+          "type": "string",
+          "pk": true,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_workspace_name",
+          "name": "name",
+          "type": "string",
+          "pk": false,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_workspace_slug",
+          "name": "slug",
+          "type": "string",
+          "pk": false,
+          "fk": null,
+          "unique": true,
+          "indexed": true,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_workspace_plan",
+          "name": "plan",
+          "type": "string",
+          "pk": false,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "free | pro | enterprise",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_workspace_owner_user_id",
+          "name": "owner_user_id",
+          "type": "string",
+          "pk": false,
+          "fk": {
+            "table": "t_user",
+            "field": "f_user_user_id"
+          },
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_workspace_created_at",
+          "name": "created_at",
+          "type": "date",
+          "pk": false,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        }
+      ],
+      "owns": [],
+      "doesNotOwn": [],
+      "conversationPoint": ""
+    },
+    {
+      "id": "t_user",
+      "name": "user",
+      "domain": "customer",
+      "x": 80,
+      "y": 80,
+      "dataClass": "master",
+      "description": "An account that can sign in. A user can belong to many workspaces.",
+      "purpose": "An account that can sign in. A user can belong to many workspaces.",
+      "owningDomain": "customer",
+      "consumingDomains": [],
+      "sourceOfTruth": "",
+      "syncDirection": "",
+      "writeOwner": "",
+      "readConsumers": [],
+      "changeFrequency": "",
+      "sensitivity": "",
+      "fields": [
+        {
+          "id": "f_user_user_id",
+          "name": "user_id",
+          "type": "string",
+          "pk": true,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_user_email",
+          "name": "email",
+          "type": "string",
+          "pk": false,
+          "fk": null,
+          "unique": true,
+          "indexed": true,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_user_display_name",
+          "name": "display_name",
+          "type": "string",
+          "pk": false,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_user_avatar_url",
+          "name": "avatar_url",
+          "type": "string",
+          "pk": false,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": true,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_user_created_at",
+          "name": "created_at",
+          "type": "date",
+          "pk": false,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        }
+      ],
+      "owns": [],
+      "doesNotOwn": [],
+      "conversationPoint": ""
+    },
+    {
+      "id": "t_membership",
+      "name": "membership",
+      "domain": "customer",
+      "x": 80,
+      "y": 380,
+      "dataClass": "reference",
+      "description": "Connects a user to a workspace and gives them a role inside it.",
+      "purpose": "Connects a user to a workspace and gives them a role inside it.",
+      "owningDomain": "customer",
+      "consumingDomains": [],
+      "sourceOfTruth": "",
+      "syncDirection": "",
+      "writeOwner": "",
+      "readConsumers": [],
+      "changeFrequency": "",
+      "sensitivity": "",
+      "fields": [
+        {
+          "id": "f_membership_membership_id",
+          "name": "membership_id",
+          "type": "string",
+          "pk": true,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_membership_workspace_id",
+          "name": "workspace_id",
+          "type": "string",
+          "pk": false,
+          "fk": {
+            "table": "t_workspace",
+            "field": "f_workspace_workspace_id"
+          },
+          "unique": false,
+          "indexed": true,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_membership_user_id",
+          "name": "user_id",
+          "type": "string",
+          "pk": false,
+          "fk": {
+            "table": "t_user",
+            "field": "f_user_user_id"
+          },
+          "unique": false,
+          "indexed": true,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_membership_role",
+          "name": "role",
+          "type": "string",
+          "pk": false,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "owner | admin | member | guest",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_membership_joined_at",
+          "name": "joined_at",
+          "type": "date",
+          "pk": false,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        }
+      ],
+      "owns": [],
+      "doesNotOwn": [],
+      "conversationPoint": ""
+    },
+    {
+      "id": "t_project",
+      "name": "project",
+      "domain": "orders",
+      "x": 460,
+      "y": 380,
+      "dataClass": "master",
+      "description": "A unit of work inside a workspace.",
+      "purpose": "A unit of work inside a workspace.",
+      "owningDomain": "orders",
+      "consumingDomains": [],
+      "sourceOfTruth": "",
+      "syncDirection": "",
+      "writeOwner": "",
+      "readConsumers": [],
+      "changeFrequency": "",
+      "sensitivity": "",
+      "fields": [
+        {
+          "id": "f_project_project_id",
+          "name": "project_id",
+          "type": "string",
+          "pk": true,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_project_workspace_id",
+          "name": "workspace_id",
+          "type": "string",
+          "pk": false,
+          "fk": {
+            "table": "t_workspace",
+            "field": "f_workspace_workspace_id"
+          },
+          "unique": false,
+          "indexed": true,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_project_name",
+          "name": "name",
+          "type": "string",
+          "pk": false,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_project_slug",
+          "name": "slug",
+          "type": "string",
+          "pk": false,
+          "fk": null,
+          "unique": false,
+          "indexed": true,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_project_status",
+          "name": "status",
+          "type": "string",
+          "pk": false,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "active | archived",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_project_created_by_user_id",
+          "name": "created_by_user_id",
+          "type": "string",
+          "pk": false,
+          "fk": {
+            "table": "t_user",
+            "field": "f_user_user_id"
+          },
+          "unique": false,
+          "indexed": false,
+          "nullable": true,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_project_created_at",
+          "name": "created_at",
+          "type": "date",
+          "pk": false,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_project_archived_at",
+          "name": "archived_at",
+          "type": "date",
+          "pk": false,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": true,
+          "description": "",
+          "example": "",
+          "warning": null
+        }
+      ],
+      "owns": [],
+      "doesNotOwn": [],
+      "conversationPoint": ""
+    },
+    {
+      "id": "t_task",
+      "name": "task",
+      "domain": "orders",
+      "x": 460,
+      "y": 700,
+      "dataClass": "transactional",
+      "description": "A unit of work inside a project. The transactional spine of the app.",
+      "purpose": "A unit of work inside a project. The transactional spine of the app.",
+      "owningDomain": "orders",
+      "consumingDomains": [],
+      "sourceOfTruth": "",
+      "syncDirection": "",
+      "writeOwner": "",
+      "readConsumers": [],
+      "changeFrequency": "",
+      "sensitivity": "",
+      "fields": [
+        {
+          "id": "f_task_task_id",
+          "name": "task_id",
+          "type": "string",
+          "pk": true,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_task_project_id",
+          "name": "project_id",
+          "type": "string",
+          "pk": false,
+          "fk": {
+            "table": "t_project",
+            "field": "f_project_project_id"
+          },
+          "unique": false,
+          "indexed": true,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_task_title",
+          "name": "title",
+          "type": "string",
+          "pk": false,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_task_description",
+          "name": "description",
+          "type": "string",
+          "pk": false,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": true,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_task_status",
+          "name": "status",
+          "type": "string",
+          "pk": false,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "todo | in_progress | blocked | done | cancelled",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_task_priority",
+          "name": "priority",
+          "type": "string",
+          "pk": false,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": true,
+          "description": "low | medium | high | critical",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_task_assignee_user_id",
+          "name": "assignee_user_id",
+          "type": "string",
+          "pk": false,
+          "fk": {
+            "table": "t_user",
+            "field": "f_user_user_id"
+          },
+          "unique": false,
+          "indexed": true,
+          "nullable": true,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_task_due_at",
+          "name": "due_at",
+          "type": "date",
+          "pk": false,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": true,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_task_completed_at",
+          "name": "completed_at",
+          "type": "date",
+          "pk": false,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": true,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_task_created_by_user_id",
+          "name": "created_by_user_id",
+          "type": "string",
+          "pk": false,
+          "fk": {
+            "table": "t_user",
+            "field": "f_user_user_id"
+          },
+          "unique": false,
+          "indexed": false,
+          "nullable": true,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_task_created_at",
+          "name": "created_at",
+          "type": "date",
+          "pk": false,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        }
+      ],
+      "owns": [],
+      "doesNotOwn": [],
+      "conversationPoint": ""
+    },
+    {
+      "id": "t_label",
+      "name": "label",
+      "domain": "orders",
+      "x": 840,
+      "y": 380,
+      "dataClass": "reference",
+      "description": "A tag attached to tasks. Workspace-scoped so the same label name in two workspaces is two separate rows.",
+      "purpose": "A tag attached to tasks. Workspace-scoped so the same label name in two workspaces is two separate rows.",
+      "owningDomain": "orders",
+      "consumingDomains": [],
+      "sourceOfTruth": "",
+      "syncDirection": "",
+      "writeOwner": "",
+      "readConsumers": [],
+      "changeFrequency": "",
+      "sensitivity": "",
+      "fields": [
+        {
+          "id": "f_label_label_id",
+          "name": "label_id",
+          "type": "string",
+          "pk": true,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_label_workspace_id",
+          "name": "workspace_id",
+          "type": "string",
+          "pk": false,
+          "fk": {
+            "table": "t_workspace",
+            "field": "f_workspace_workspace_id"
+          },
+          "unique": false,
+          "indexed": true,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_label_name",
+          "name": "name",
+          "type": "string",
+          "pk": false,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_label_color",
+          "name": "color",
+          "type": "string",
+          "pk": false,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": true,
+          "description": "Hex color for the chip on the UI.",
+          "example": "",
+          "warning": null
+        }
+      ],
+      "owns": [],
+      "doesNotOwn": [],
+      "conversationPoint": ""
+    },
+    {
+      "id": "t_task_label",
+      "name": "task_label",
+      "domain": "orders",
+      "x": 840,
+      "y": 700,
+      "dataClass": "reference",
+      "description": "Many-to-many between tasks and labels.",
+      "purpose": "Many-to-many between tasks and labels.",
+      "owningDomain": "orders",
+      "consumingDomains": [],
+      "sourceOfTruth": "",
+      "syncDirection": "",
+      "writeOwner": "",
+      "readConsumers": [],
+      "changeFrequency": "",
+      "sensitivity": "",
+      "fields": [
+        {
+          "id": "f_task_label_task_id",
+          "name": "task_id",
+          "type": "string",
+          "pk": true,
+          "fk": {
+            "table": "t_task",
+            "field": "f_task_task_id"
+          },
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_task_label_label_id",
+          "name": "label_id",
+          "type": "string",
+          "pk": true,
+          "fk": {
+            "table": "t_label",
+            "field": "f_label_label_id"
+          },
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        }
+      ],
+      "owns": [],
+      "doesNotOwn": [],
+      "conversationPoint": ""
+    },
+    {
+      "id": "t_comment",
+      "name": "comment",
+      "domain": "customer",
+      "x": 80,
+      "y": 700,
+      "dataClass": "transactional",
+      "description": "A user comment on a task. Threaded via parent_comment_id.",
+      "purpose": "A user comment on a task. Threaded via parent_comment_id.",
+      "owningDomain": "customer",
+      "consumingDomains": [],
+      "sourceOfTruth": "",
+      "syncDirection": "",
+      "writeOwner": "",
+      "readConsumers": [],
+      "changeFrequency": "",
+      "sensitivity": "",
+      "fields": [
+        {
+          "id": "f_comment_comment_id",
+          "name": "comment_id",
+          "type": "string",
+          "pk": true,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_comment_task_id",
+          "name": "task_id",
+          "type": "string",
+          "pk": false,
+          "fk": {
+            "table": "t_task",
+            "field": "f_task_task_id"
+          },
+          "unique": false,
+          "indexed": true,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_comment_parent_comment_id",
+          "name": "parent_comment_id",
+          "type": "string",
+          "pk": false,
+          "fk": {
+            "table": "t_comment",
+            "field": "f_comment_comment_id"
+          },
+          "unique": false,
+          "indexed": false,
+          "nullable": true,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_comment_author_user_id",
+          "name": "author_user_id",
+          "type": "string",
+          "pk": false,
+          "fk": {
+            "table": "t_user",
+            "field": "f_user_user_id"
+          },
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_comment_body",
+          "name": "body",
+          "type": "string",
+          "pk": false,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_comment_created_at",
+          "name": "created_at",
+          "type": "date",
+          "pk": false,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_comment_edited_at",
+          "name": "edited_at",
+          "type": "date",
+          "pk": false,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": true,
+          "description": "",
+          "example": "",
+          "warning": null
+        }
+      ],
+      "owns": [],
+      "doesNotOwn": [],
+      "conversationPoint": ""
+    },
+    {
+      "id": "t_attachment",
+      "name": "attachment",
+      "domain": "inventory",
+      "x": 80,
+      "y": 1020,
+      "dataClass": "transactional",
+      "description": "A file uploaded against a task.",
+      "purpose": "A file uploaded against a task.",
+      "owningDomain": "inventory",
+      "consumingDomains": [],
+      "sourceOfTruth": "",
+      "syncDirection": "",
+      "writeOwner": "",
+      "readConsumers": [],
+      "changeFrequency": "",
+      "sensitivity": "",
+      "fields": [
+        {
+          "id": "f_attachment_attachment_id",
+          "name": "attachment_id",
+          "type": "string",
+          "pk": true,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_attachment_task_id",
+          "name": "task_id",
+          "type": "string",
+          "pk": false,
+          "fk": {
+            "table": "t_task",
+            "field": "f_task_task_id"
+          },
+          "unique": false,
+          "indexed": true,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_attachment_filename",
+          "name": "filename",
+          "type": "string",
+          "pk": false,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_attachment_file_url",
+          "name": "file_url",
+          "type": "string",
+          "pk": false,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_attachment_size_bytes",
+          "name": "size_bytes",
+          "type": "integer",
+          "pk": false,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": true,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_attachment_uploaded_by_user_id",
+          "name": "uploaded_by_user_id",
+          "type": "string",
+          "pk": false,
+          "fk": {
+            "table": "t_user",
+            "field": "f_user_user_id"
+          },
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_attachment_uploaded_at",
+          "name": "uploaded_at",
+          "type": "date",
+          "pk": false,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        }
+      ],
+      "owns": [],
+      "doesNotOwn": [],
+      "conversationPoint": ""
+    },
+    {
+      "id": "t_audit_log",
+      "name": "audit_log",
+      "domain": "finance",
+      "x": 1220,
+      "y": 700,
+      "dataClass": "transactional",
+      "description": "Records every state-changing action across the workspace, polymorphically.",
+      "purpose": "Records every state-changing action across the workspace, polymorphically.",
+      "owningDomain": "finance",
+      "consumingDomains": [],
+      "sourceOfTruth": "",
+      "syncDirection": "",
+      "writeOwner": "",
+      "readConsumers": [],
+      "changeFrequency": "",
+      "sensitivity": "",
+      "fields": [
+        {
+          "id": "f_audit_log_audit_log_id",
+          "name": "audit_log_id",
+          "type": "string",
+          "pk": true,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_audit_log_workspace_id",
+          "name": "workspace_id",
+          "type": "string",
+          "pk": false,
+          "fk": {
+            "table": "t_workspace",
+            "field": "f_workspace_workspace_id"
+          },
+          "unique": false,
+          "indexed": true,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_audit_log_actor_user_id",
+          "name": "actor_user_id",
+          "type": "string",
+          "pk": false,
+          "fk": {
+            "table": "t_user",
+            "field": "f_user_user_id"
+          },
+          "unique": false,
+          "indexed": true,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_audit_log_entity_type",
+          "name": "entity_type",
+          "type": "string",
+          "pk": false,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "task | project | comment | membership | …",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_audit_log_entity_id",
+          "name": "entity_id",
+          "type": "string",
+          "pk": false,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_audit_log_action",
+          "name": "action",
+          "type": "string",
+          "pk": false,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "create | update | delete",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_audit_log_changes",
+          "name": "changes",
+          "type": "object",
+          "pk": false,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": true,
+          "description": "",
+          "example": "",
+          "warning": null
+        },
+        {
+          "id": "f_audit_log_ts",
+          "name": "ts",
+          "type": "date",
+          "pk": false,
+          "fk": null,
+          "unique": false,
+          "indexed": false,
+          "nullable": false,
+          "description": "",
+          "example": "",
+          "warning": null
+        }
+      ],
+      "owns": [],
+      "doesNotOwn": [],
+      "conversationPoint": ""
+    }
+  ],
+  "relationships": [
+    {
+      "id": "r_1",
+      "from": {
+        "table": "t_workspace",
+        "field": "f_workspace_owner_user_id"
+      },
+      "to": {
+        "table": "t_user",
+        "field": "f_user_user_id"
+      },
+      "type": "N:1"
+    },
+    {
+      "id": "r_2",
+      "from": {
+        "table": "t_membership",
+        "field": "f_membership_workspace_id"
+      },
+      "to": {
+        "table": "t_workspace",
+        "field": "f_workspace_workspace_id"
+      },
+      "type": "N:1"
+    },
+    {
+      "id": "r_3",
+      "from": {
+        "table": "t_membership",
+        "field": "f_membership_user_id"
+      },
+      "to": {
+        "table": "t_user",
+        "field": "f_user_user_id"
+      },
+      "type": "N:1"
+    },
+    {
+      "id": "r_4",
+      "from": {
+        "table": "t_project",
+        "field": "f_project_workspace_id"
+      },
+      "to": {
+        "table": "t_workspace",
+        "field": "f_workspace_workspace_id"
+      },
+      "type": "N:1"
+    },
+    {
+      "id": "r_5",
+      "from": {
+        "table": "t_project",
+        "field": "f_project_created_by_user_id"
+      },
+      "to": {
+        "table": "t_user",
+        "field": "f_user_user_id"
+      },
+      "type": "N:1"
+    },
+    {
+      "id": "r_6",
+      "from": {
+        "table": "t_task",
+        "field": "f_task_project_id"
+      },
+      "to": {
+        "table": "t_project",
+        "field": "f_project_project_id"
+      },
+      "type": "N:1"
+    },
+    {
+      "id": "r_7",
+      "from": {
+        "table": "t_task",
+        "field": "f_task_assignee_user_id"
+      },
+      "to": {
+        "table": "t_user",
+        "field": "f_user_user_id"
+      },
+      "type": "N:1"
+    },
+    {
+      "id": "r_8",
+      "from": {
+        "table": "t_task",
+        "field": "f_task_created_by_user_id"
+      },
+      "to": {
+        "table": "t_user",
+        "field": "f_user_user_id"
+      },
+      "type": "N:1"
+    },
+    {
+      "id": "r_9",
+      "from": {
+        "table": "t_label",
+        "field": "f_label_workspace_id"
+      },
+      "to": {
+        "table": "t_workspace",
+        "field": "f_workspace_workspace_id"
+      },
+      "type": "N:1"
+    },
+    {
+      "id": "r_10",
+      "from": {
+        "table": "t_task_label",
+        "field": "f_task_label_task_id"
+      },
+      "to": {
+        "table": "t_task",
+        "field": "f_task_task_id"
+      },
+      "type": "N:1"
+    },
+    {
+      "id": "r_11",
+      "from": {
+        "table": "t_task_label",
+        "field": "f_task_label_label_id"
+      },
+      "to": {
+        "table": "t_label",
+        "field": "f_label_label_id"
+      },
+      "type": "N:1"
+    },
+    {
+      "id": "r_12",
+      "from": {
+        "table": "t_comment",
+        "field": "f_comment_task_id"
+      },
+      "to": {
+        "table": "t_task",
+        "field": "f_task_task_id"
+      },
+      "type": "N:1"
+    },
+    {
+      "id": "r_13",
+      "from": {
+        "table": "t_comment",
+        "field": "f_comment_parent_comment_id"
+      },
+      "to": {
+        "table": "t_comment",
+        "field": "f_comment_comment_id"
+      },
+      "type": "N:1"
+    },
+    {
+      "id": "r_14",
+      "from": {
+        "table": "t_comment",
+        "field": "f_comment_author_user_id"
+      },
+      "to": {
+        "table": "t_user",
+        "field": "f_user_user_id"
+      },
+      "type": "N:1"
+    },
+    {
+      "id": "r_15",
+      "from": {
+        "table": "t_attachment",
+        "field": "f_attachment_task_id"
+      },
+      "to": {
+        "table": "t_task",
+        "field": "f_task_task_id"
+      },
+      "type": "N:1"
+    },
+    {
+      "id": "r_16",
+      "from": {
+        "table": "t_attachment",
+        "field": "f_attachment_uploaded_by_user_id"
+      },
+      "to": {
+        "table": "t_user",
+        "field": "f_user_user_id"
+      },
+      "type": "N:1"
+    },
+    {
+      "id": "r_17",
+      "from": {
+        "table": "t_audit_log",
+        "field": "f_audit_log_workspace_id"
+      },
+      "to": {
+        "table": "t_workspace",
+        "field": "f_workspace_workspace_id"
+      },
+      "type": "N:1"
+    },
+    {
+      "id": "r_18",
+      "from": {
+        "table": "t_audit_log",
+        "field": "f_audit_log_actor_user_id"
+      },
+      "to": {
+        "table": "t_user",
+        "field": "f_user_user_id"
+      },
+      "type": "N:1"
+    }
+  ]
+}

@@ -1,0 +1,77 @@
+{
+ "id": "minimal-flows",
+ "name": "Quote, bind, claim",
+ "description": "The three flows this model exists to support, and the entities each one touches.",
+ "steps": [
+  {
+   "id": "intro",
+   "title": "Three flows, nine tables",
+   "body": "This model carries only what quoting, binding and claiming need. An entity is present only if one of those flows cannot work without it. Broker, product, peril and underwriter are controlled lists, so one broker is one filter value rather than four spellings of it.",
+   "focus": "all",
+   "touches": [
+    "Quote",
+    "Bind",
+    "Claim"
+   ],
+   "questions": []
+  },
+  {
+   "id": "q",
+   "title": "01 \u00b7 A price is offered",
+   "body": "A quote is a price on a risk that nobody has agreed to yet. Most expire; 22.8% convert. Keeping quotes as their own entity is what makes conversion measurable at all.",
+   "focus": [
+    "t_quote",
+    "t_product"
+   ],
+   "touches": [
+    "Quote"
+   ],
+   "questions": []
+  },
+  {
+   "id": "b",
+   "title": "02 \u00b7 The customer says yes",
+   "body": "A converted quote becomes a policy, and a policy immediately has one term. The policy holds what is true for the life of the contract; the term holds what is true for this period of cover \u2014 its premium, its billing, its claims.",
+   "focus": [
+    "t_policy",
+    "t_policy_term",
+    "t_policyholder"
+   ],
+   "touches": [
+    "Bind"
+   ],
+   "questions": [
+    "Should an unconverted quote hold a policyholder, or only a prospect?"
+   ]
+  },
+  {
+   "id": "c",
+   "title": "03 \u00b7 Something goes wrong",
+   "body": "A claim is reported against a policy term, not against the policy \u2014 which term was in force on the date of loss decides what cover applies. Getting that relationship right is why the term is its own entity.",
+   "focus": [
+    "t_claim",
+    "t_policy_term",
+    "t_peril"
+   ],
+   "touches": [
+    "Claim"
+   ],
+   "questions": [
+    "What happens when the loss date falls in a lapsed term?"
+   ]
+  },
+  {
+   "id": "r",
+   "title": "04 \u00b7 The term ends",
+   "body": "Renewal is a decision on the term, not a new policy. The policy continues; a new term begins. Modelling it the other way is what makes retention impossible to measure in the legacy system.",
+   "focus": [
+    "t_policy_term",
+    "t_policy"
+   ],
+   "touches": [
+    "Bind"
+   ],
+   "questions": []
+  }
+ ]
+}

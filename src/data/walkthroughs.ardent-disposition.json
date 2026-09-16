@@ -1,0 +1,76 @@
+{
+ "id": "pair-disposition",
+ "name": "Policy vs PolicyTerm",
+ "description": "Every live PMAST and POLTERM field, what kind of field it is, which of the two rows it belongs on, and whether it should be carried at all.",
+ "steps": [
+  {
+   "id": "intro",
+   "title": "One legacy record, two target rows",
+   "body": "PMAST is keyed on the policy: 604,812 records. POLTERM is keyed policy x term \u2014 9,140,733 rows, 15.1 terms per policy. Everything in PMAST is a fact about the policy. Everything in POLTERM is a fact about one period of cover, unless the same value is copied to every term. Deciding which is which is the whole job.",
+   "focus": "all",
+   "touches": [
+    "Policy",
+    "Term"
+   ],
+   "questions": []
+  },
+  {
+   "id": "split",
+   "title": "01 \u00b7 Which side does a field land on",
+   "body": "The split follows the key. The exceptions are the ones to watch: a column placed on the policy asserts that every term row agrees, and the extract holds only the current term for most policies, so that cannot be tested here.",
+   "focus": [
+    "t_policy",
+    "t_policy_term"
+   ],
+   "touches": [
+    "Policy",
+    "Term"
+   ],
+   "questions": [
+    "Which POLTERM columns are genuinely policy-level?"
+   ]
+  },
+  {
+   "id": "carry",
+   "title": "02 \u00b7 Carry, combine, or leave behind",
+   "body": "89 fields carry over as themselves. 12 combine into something that already holds the concept \u2014 a sum insured that is the sum of its own parts, a premium tax that is gross minus net, two columns for one broker relationship. 8 are not carried, and 4 stop here because nobody can say what they are.",
+   "focus": [
+    "t_policy"
+   ],
+   "touches": [
+    "Policy"
+   ],
+   "questions": [
+    "Do the parallel endorsement and rating-factor arrays become rows?"
+   ]
+  },
+  {
+   "id": "status",
+   "title": "03 \u00b7 The status hidden in the search key",
+   "body": "PMAST has no status attribute. 41,206 policies \u2014 6.81% \u2014 carry a lifecycle word inside the alphabetical search key instead: LAPSED, CANCELLED, VOID, NTU, DECLINED. Status is invisible to any query that does not string-match, and the search key is destroyed for exactly the policies most likely to be looked up in error. It is recovered here as a real field.",
+   "focus": [
+    "t_policy"
+   ],
+   "touches": [
+    "Policy"
+   ],
+   "questions": [
+    "Is the recovered lifecycle vocabulary complete?"
+   ]
+  },
+  {
+   "id": "term",
+   "title": "04 \u00b7 What the term row is really for",
+   "body": "Strip the batch markers and the term row is four things: what it cost, what was billed and paid, what was claimed, and whether it renewed. Everything else on it either belongs on the policy or is arithmetic over columns already present.",
+   "focus": [
+    "t_policy_term"
+   ],
+   "touches": [
+    "Term"
+   ],
+   "questions": [
+    "Which of the money columns are stored and which are derived?"
+   ]
+  }
+ ]
+}

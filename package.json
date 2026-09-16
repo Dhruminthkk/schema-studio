@@ -1,0 +1,28 @@
+{
+  "name": "schema-studio",
+  "private": false,
+  "version": "0.1.0",
+  "description": "Explore a legacy data estate as a model you can walk around. Pan and zoom the ERD, follow guided walkthroughs, read the rationale behind each decision, and inspect every field's legacy source, census fill, sensitivity class and whether it is stored or derived. Ships with a worked insurance example plus three small starter schemas.",
+  "type": "module",
+  "keywords": [
+    "erd",
+    "schema",
+    "database",
+    "diagram",
+    "visualization",
+    "offline"
+  ],
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.4",
+    "vite": "^5.4.10"
+  }
+}

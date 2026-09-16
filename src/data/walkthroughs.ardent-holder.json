@@ -1,0 +1,60 @@
+{
+ "id": "holder-shapes",
+ "name": "Policyholder \u2014 three shapes",
+ "description": "One classified field catalog, projected three ways: a normalised system of record, a denormalised read model, and a minimal model.",
+ "steps": [
+  {
+   "id": "intro",
+   "title": "One catalog, three shapes",
+   "body": "PHOLD has 288,406 records and 51 fields worth modelling. They are classified once \u2014 by what kind of thing they are, what a dashboard can do with them, and how sensitive they are \u2014 and the three shapes are projections of that one catalog. A field cannot mean different things in different shapes.",
+   "focus": "all",
+   "touches": [
+    "Policyholder"
+   ],
+   "questions": []
+  },
+  {
+   "id": "norm",
+   "title": "01 \u00b7 Normalised \u2014 the system of record",
+   "body": "One party document with seven nested sections, plus three collections beside it. A concept earns its own collection only if a batch rebuilds it on a different cadence, or it is a security boundary. Portfolio and claims are rebuilt nightly from other files; payment instruments are isolated because they need their own lock.",
+   "focus": [
+    "t_policyholder",
+    "t_policyholder_payment_instrument"
+   ],
+   "touches": [
+    "Policyholder"
+   ],
+   "questions": [
+    "Should payment instruments migrate at all, or stay with the processor?"
+   ]
+  },
+  {
+   "id": "denorm",
+   "title": "02 \u00b7 Denormalised \u2014 what the dashboard reads",
+   "body": "One document per holder carrying every tile in a single fetch. Payment data is excluded outright, and anything that is drill-down rather than a tile stays on the normalised side.",
+   "focus": [
+    "t_policyholder_360"
+   ],
+   "touches": [
+    "Policyholder"
+   ],
+   "questions": [
+    "Is the dashboard scope right?"
+   ]
+  },
+  {
+   "id": "min",
+   "title": "03 \u00b7 Minimal \u2014 the first dashboard",
+   "body": "Three collections: who they are and the dimensions every tile slices by, what they are worth, and what they cost. A field earns its place only if a tile shows it or slices by it \u2014 and most of what remains is owned by another file, so this shape cannot be built from PHOLD alone.",
+   "focus": [
+    "t_policyholder",
+    "t_policyholder_value",
+    "t_policyholder_risk"
+   ],
+   "touches": [
+    "Policyholder"
+   ],
+   "questions": []
+  }
+ ]
+}
