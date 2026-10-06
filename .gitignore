@@ -17,3 +17,6 @@ pnpm-debug.log*
 .DS_Store
 .DS_Store?
 Thumbs.db
+
+# /brag video renders and working files
+brag-output/

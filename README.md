@@ -57,6 +57,11 @@ npm run dev      # http://localhost:5310
 npm run build    # static bundle in dist/
 ```
 
+Pushes to `main` deploy `dist/` to GitHub Pages via
+[`.github/workflows/deploy.yml`](.github/workflows/deploy.yml). One-time setup: in the repo's
+**Settings → Pages**, set **Source** to **GitHub Actions**. The app is then served at
+`https://dhruminthkk.github.io/schema-studio/`, with the landing page and guide under `site/`.
+
 ## Add your own schema
 
 To explore one without committing it, just use **Import** — nothing leaves the browser.
